@@ -66,4 +66,12 @@ export class TranscriptComponent {
       this.selectedTermIdx = this.terms.length - 1;
     }
   }
+
+  scrollTabsToEnd(tabBar: HTMLElement) {
+    if (tabBar) {
+      setTimeout(() => {
+        tabBar.scrollTo({ left: tabBar.scrollWidth, behavior: 'smooth' });
+      }, 0);
+    }
+  }
 }

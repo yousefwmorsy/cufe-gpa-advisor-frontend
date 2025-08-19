@@ -1,3 +1,9 @@
+/* Prevent horizontal scroll on mobile, only allow tab bar to scroll */
+@media (max-width: 767px) {
+	html, body, .h-screen, .flex {
+		overflow-x: hidden !important;
+	}
+}
 /* Responsive sidebar and main layout */
 .ml-56 {
 	margin-left: 14rem;
