@@ -8,9 +8,12 @@
 
 		<!-- Transcript Data Table with Tabs -->
 		<div class="w-full max-w-4xl mt-8">
-									<div class="flex mb-2 border-b border-gray-300 items-center">
+									<div class="flex mb-2 border-b border-gray-300 items-center overflow-x-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-gray-200" style="white-space: nowrap;">
 											<ng-container *ngFor="let term of terms; let i = index">
-												<div class="flex items-center mr-2">
+												<div class="flex items-center mr-2"
+													*ngIf="true"
+        
+												>
 													<button
 														(click)="selectTerm(i)"
 														[class.bg-accent]="selectedTermIdx === i"
