@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopRibbonComponent } from './layout/top-ribbon/top-ribbon.component';
@@ -27,7 +28,8 @@ import { AdvisorComponent } from './pages/advisor/advisor.component';
     BrowserModule,
     CommonModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   bootstrap: [AppComponent]
 })
