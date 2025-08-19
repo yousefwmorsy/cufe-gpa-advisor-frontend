@@ -70,24 +70,24 @@
 						<th class="p-3 text-center">Actions</th>
 					</tr>
 				</thead>
-				<tbody>
-								<tr *ngFor="let course of terms[selectedTermIdx].courses; let ci = index">
-									<td class="p-2">
-										<input [(ngModel)]="course.name" class="w-full p-2 border rounded" />
-									</td>
-									<td class="p-2 text-center">
-										<input type="number" [(ngModel)]="course.credits" class="w-16 p-2 border rounded text-center" />
-									</td>
-									<td class="p-2 text-center">
-										<input [(ngModel)]="course.grade" class="w-16 p-2 border rounded text-center" />
-									</td>
-									<td class="p-2 text-center">
-										<button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="terms[selectedTermIdx].courses.splice(ci, 1)">Delete</button>
-									</td>
-								</tr>
+                <tbody>
+                    <tr *ngFor="let course of terms[selectedTermIdx].courses; let ci = index">
+                        <td class="p-2">
+                            <input [(ngModel)]="course.name" class="w-full p-2 border rounded" />
+                        </td>
+                        <td class="p-2 text-center">
+                            <input type="number" [(ngModel)]="course.credits" class="w-16 p-2 border rounded text-center" />
+                        </td>
+                        <td class="p-2 text-center">
+                            <input [(ngModel)]="course.grade" class="w-16 p-2 border rounded text-center" />
+                        </td>
+                        <td class="p-2 text-center">
+                            <button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="terms[selectedTermIdx].courses.splice(ci, 1)">Delete</button>
+                        </td>
+                    </tr>
 					<tr>
 						<td colspan="4" class="p-2 text-right">
-							<button class="px-4 py-2 bg-accent text-white rounded hover:bg-accent-dark" (click)="terms[selectedTermIdx].courses.push({ name: '', credits: 0, grade: '' })">Add Course</button>
+                            <button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white" (click)="terms[selectedTermIdx].courses.push({ name: '', credits: 0, grade: '' })">Add Course</button>
 						</td>
 					</tr>
 				</tbody>
