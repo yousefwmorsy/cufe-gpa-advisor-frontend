@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 
@@ -16,6 +16,7 @@ interface NavItem {
   imports: [CommonModule, RouterModule]
 })
 export class SidebarComponent {
+  @Output() closeSidebar = new EventEmitter<void>();
   navItems: NavItem[] = [
     { label: 'Home', key: 'home', route: '/home' },
     { label: 'Manage Grades', key: 'transcript', route: '/transcript' },
