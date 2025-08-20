@@ -1,8 +1,3 @@
-import { Component } from '@angular/core';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-transcript',
@@ -15,27 +10,62 @@ export class TranscriptComponent {
   editTerms = false;
   pdfUrl: SafeResourceUrl | null = null;
 
+  gradeOptions = [
+    { label: 'A+', value: 'A+' },
+    { label: 'A', value: 'A' },
+    { label: 'A-', value: 'A-' },
+    { label: 'B+', value: 'B+' },
+    { label: 'B', value: 'B' },
+    { label: 'B-', value: 'B-' },
+    { label: 'C+', value: 'C+' },
+    { label: 'C', value: 'C' },
+    { label: 'C-', value: 'C-' },
+    { label: 'D+', value: 'D+' },
+    { label: 'D', value: 'D' },
+    { label: 'F', value: 'F' },
+    { label: 'IC', value: 'IC' },
+    { label: 'W', value: 'W' },
+    { label: 'FW', value: 'FW' }
+  ];
+
+  gradeToGpaMap: { [key: string]: number } = {
+    'A+': 4.00,
+    'A': 4.00,
+    'A-': 3.70,
+    'B+': 3.30,
+    'B': 3.00,
+    'B-': 2.70,
+    'C+': 2.30,
+    'C': 2.00,
+    'C-': 1.70,
+    'D+': 1.30,
+    'D': 1.00,
+    'F': 0.00,
+    'IC': 0.00,
+    'W': 0.00,
+    'FW': 0.00
+  };
   terms = [
-    {
-      name: 'Fall',
-      year: '2024',
-      courses: [
-        { name: 'Calculus I', credits: 3, grade: 'A' },
-        { name: 'Physics I', credits: 4, grade: 'B+' }
-      ]
-    },
     {
       name: 'Spring',
       year: '2025',
       courses: [
-        { name: 'Linear Algebra', credits: 3, grade: 'A-' },
-        { name: 'Chemistry', credits: 3, grade: 'B' }
+        { name: 'Linear Algebra', credits: 3, grade: 'A-', gpa: 3.70 },
+        { name: 'Chemistry', credits: 3, grade: 'B', gpa: 3.00 }
       ]
     }
   ];
+
+  onGradeChange(course: any): void {
+    course.gpa = this.gradeToGpaMap[course.grade] || 0;
+    if (["IC", "W", "FW"].includes(course.grade)) {
+      course.credits = 0;
+    }
+  }
   selectedTermIdx = 0;
 
   constructor(private sanitizer: DomSanitizer) {}
+
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -66,12 +96,8 @@ export class TranscriptComponent {
       this.selectedTermIdx = this.terms.length - 1;
     }
   }
-
-  scrollTabsToEnd(tabBar: HTMLElement) {
-    if (tabBar) {
-      setTimeout(() => {
-        tabBar.scrollTo({ left: tabBar.scrollWidth, behavior: 'smooth' });
-      }, 0);
-    }
-  }
 }
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
