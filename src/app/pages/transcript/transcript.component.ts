@@ -1,4 +1,3 @@
-
 @Component({
   selector: 'app-transcript',
   templateUrl: './transcript.component.html',
@@ -7,6 +6,12 @@
   imports: [CommonModule, FormsModule]
 })
 export class TranscriptComponent {
+  // ...existing code...
+  onCreditsChange(course: any): void {
+    if (course.credits < 0) {
+      course.credits = 0;
+    }
+  }
   editTerms = false;
   pdfUrl: SafeResourceUrl | null = null;
 
@@ -60,8 +65,13 @@ export class TranscriptComponent {
     course.gpa = this.gradeToGpaMap[course.grade] || 0;
     if (["IC", "W", "FW"].includes(course.grade)) {
       course.credits = 0;
+    } else if (course.credits < 0) {
+      course.credits = 0;
     }
   }
+
+
+
   selectedTermIdx = 0;
 
   constructor(private sanitizer: DomSanitizer) {}
