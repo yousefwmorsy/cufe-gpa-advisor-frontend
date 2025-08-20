@@ -7,6 +7,31 @@
 })
 export class TranscriptComponent {
   // ...existing code...
+  get currentTermGPA(): number {
+    const courses = this.terms[this.selectedTermIdx]?.courses || [];
+    let totalPoints = 0, totalCredits = 0;
+    for (const c of courses) {
+      if (c.credits > 0) {
+        totalPoints += c.gpa * c.credits;
+        totalCredits += c.credits;
+      }
+    }
+    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+  }
+
+  get cumulativeGPA(): number {
+    let totalPoints = 0, totalCredits = 0;
+    for (const term of this.terms) {
+      for (const c of term.courses) {
+        if (c.credits > 0) {
+          totalPoints += c.gpa * c.credits;
+          totalCredits += c.credits;
+        }
+      }
+    }
+    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+  }
+  // ...existing code...
   onCreditsChange(course: any): void {
     if (course.credits < 0) {
       course.credits = 0;

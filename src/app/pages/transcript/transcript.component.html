@@ -1,3 +1,4 @@
+			
 <div class="flex flex-col items-center w-full h-full p-2">
 	<div *ngIf="pdfUrl" class="mt-8 w-full h-full flex justify-center pdf-viewer-area">
 		<iframe [src]="pdfUrl" width="900" height="400" class="rounded-lg shadow-lg border-collapse" title="Transcript PDF"></iframe>
@@ -98,5 +99,19 @@
 					</tr>
 				</tbody>
 			</table>
-		</div>
+		<!-- GPA Boxes -->
+			<div class="w-full max-w-4xl mx-auto flex mt-6 mb-2">
+				<div class="w-1/2 px-2">
+					<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-fuchsia-700 hover:bg-fuchsia-50 py-6">
+						<div class="text-xs text-gray-500 mb-1">Current Term GPA</div>
+						<div class="text-2xl font-bold text-accent">{{ currentTermGPA }}</div>
+					</div>
+				</div>
+				<div class="w-1/2 px-2">
+					<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-fuchsia-700 hover:bg-fuchsia-50 py-6">
+						<div class="text-xs text-gray-500 mb-1">Cumulative GPA</div>
+						<div class="text-2xl font-bold text-accent">{{ cumulativeGPA }}</div>
+					</div>
+				</div>
+			</div>
 </div>
