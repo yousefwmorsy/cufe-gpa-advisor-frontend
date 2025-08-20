@@ -4,7 +4,7 @@
 								<button
 									(click)="goToPage(item)"
 									[ngClass]="{
-										'bg-dark text-white font-bold shadow-accent shadow-md': currentPage === item.key,
+										'bg-dark text-white font-bold shadow-accent shadow-sm': currentPage === item.key,
 										'bg-transparent text-gray-100': currentPage !== item.key
 									}"
 									class="w-11/12 py-3 px-6 my-2 rounded-lg text-lg transition-all font-mono outline-none hover:bg-accent hover:text-white hover:shadow-lg"

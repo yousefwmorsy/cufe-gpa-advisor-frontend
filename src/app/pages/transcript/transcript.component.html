@@ -1,6 +1,6 @@
 			
 <div class="flex flex-col items-center w-full h-full p-2">
-	<div *ngIf="pdfUrl" class="mt-8 w-full h-full flex justify-center pdf-viewer-area">
+	<div *ngIf="pdfUrl" class="mt-2 mb-4 w-full h-full flex justify-center pdf-viewer-area">
 		<iframe [src]="pdfUrl" width="900" height="400" class="rounded-lg shadow-lg border-collapse" title="Transcript PDF"></iframe>
 	</div>
 
@@ -8,7 +8,7 @@
 	<input id="pdfUpload" type="file" accept="application/pdf" (change)="onFileSelected($event)" class="hidden" />
 
 		<!-- Transcript Data Table with Tabs -->
-		<div class="w-full max-w-4xl mt-8">
+		<div class="w-full max-w-4xl mt-4">
 									<div class="flex mb-2 border-b border-gray-300 items-center overflow-x-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-gray-200" style="white-space: nowrap;">
 											<ng-container *ngFor="let term of terms; let i = index">
 												<div class="flex items-center mr-2"
@@ -100,18 +100,17 @@
 				</tbody>
 			</table>
 		<!-- GPA Boxes -->
-			<div class="w-full max-w-4xl mx-auto flex mt-6 mb-2">
-				<div class="w-1/2 px-2">
-					<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-fuchsia-700 hover:bg-fuchsia-50 py-6">
-						<div class="text-xs text-gray-500 mb-1">Current Term GPA</div>
-						<div class="text-2xl font-bold text-accent">{{ currentTermGPA }}</div>
-					</div>
-				</div>
-				<div class="w-1/2 px-2">
-					<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-fuchsia-700 hover:bg-fuchsia-50 py-6">
-						<div class="text-xs text-gray-500 mb-1">Cumulative GPA</div>
-						<div class="text-2xl font-bold text-accent">{{ cumulativeGPA }}</div>
-					</div>
+		<div class="w-full border-collapse flex mt-6 mb-2">
+			<div class="w-1/2 pr-2">
+				<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+					<div class="text-s text-gray-500 mb-1 group-hover:text-white">Current Term GPA</div>
+					<div class="text-2xl font-bold text-accent group-hover:text-white">{{ currentTermGPA }}</div>
 				</div>
 			</div>
-</div>
+			<div class="w-1/2 pl-2">
+				<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+					<div class="text-s text-gray-500 mb-1 group-hover:text-white">Cumulative GPA</div>
+					<div class="text-2xl font-bold text-accent group-hover:text-white">{{ cumulativeGPA }}</div>
+				</div>
+			</div>
+		</div>
