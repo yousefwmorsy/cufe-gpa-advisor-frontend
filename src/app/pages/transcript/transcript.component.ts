@@ -6,7 +6,44 @@
   imports: [CommonModule, FormsModule]
 })
 export class TranscriptComponent {
-  // ...existing code...
+  showTextPopup = false;
+  transcriptText = '';
+
+  confirmTranscriptText() {
+    this.showTextPopup = false;
+    fetch('http://localhost:8000/parse-transcript', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: this.transcriptText })
+    })
+      .then(res => res.json())
+      .then(data => {
+        // Convert API response to terms format for tabs and course info
+        this.terms = Object.entries(data).map(([termKey, courses]) => {
+          // Split termKey into name and year if possible
+          const match = termKey.match(/^(\w+)-(\d{4})$/);
+          let name = termKey, year = '';
+          if (match) {
+            name = match[1];
+            year = match[2];
+          }
+          return {
+            name,
+            year,
+            courses: (courses as any[]).map((c: any) => ({
+              name: c.course_title,
+              credits: c.hours,
+              grade: c.grade,
+              gpa: this.gradeToGpaMap[c.grade] || 0
+            }))
+          };
+        });
+        this.selectedTermIdx = 0;
+      })
+      .catch(err => {
+        console.error('Error parsing transcript:', err);
+      });
+  }
   get currentTermGPA(): number {
     const courses = this.terms[this.selectedTermIdx]?.courses || [];
     let totalPoints = 0, totalCredits = 0;
