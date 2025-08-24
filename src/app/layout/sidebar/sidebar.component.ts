@@ -24,12 +24,15 @@ export class SidebarComponent {
     { label: 'AI Advisor', key: 'advisor', route: '/advisor' }
   ];
 
-  currentPage: string = 'home';
-
   constructor(private router: Router) {}
 
+  getCurrentRouteKey(): string {
+    const currentRoute = this.router.url;
+    const found = this.navItems.find(item => currentRoute.startsWith(item.route));
+    return found ? found.key : '';
+  }
+
   goToPage(item: NavItem): void {
-    this.currentPage = item.key;
     this.router.navigate([item.route]);
   }
 }

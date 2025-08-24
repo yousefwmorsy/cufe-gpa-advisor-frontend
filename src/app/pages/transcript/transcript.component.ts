@@ -5,9 +5,19 @@
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
-export class TranscriptComponent {
+export class TranscriptComponent implements OnInit {
   showTextPopup = false;
   transcriptText = '';
+
+  ngOnInit() {
+    // Load terms from localStorage if available
+    const saved = localStorage.getItem('transcript_terms');
+    if (saved) {
+      try {
+        this.terms = JSON.parse(saved);
+      } catch {}
+    }
+  }
 
   confirmTranscriptText() {
     this.showTextPopup = false;
@@ -38,6 +48,8 @@ export class TranscriptComponent {
             }))
           };
         });
+        // Save to localStorage for persistence
+        localStorage.setItem('transcript_terms', JSON.stringify(this.terms));
         this.selectedTermIdx = 0;
       })
       .catch(err => {
@@ -68,7 +80,6 @@ export class TranscriptComponent {
     }
     return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
   }
-  // ...existing code...
   onCreditsChange(course: any): void {
     if (course.credits < 0) {
       course.credits = 0;
@@ -169,7 +180,7 @@ export class TranscriptComponent {
     }
   }
 }
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
