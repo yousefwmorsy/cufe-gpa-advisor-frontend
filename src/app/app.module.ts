@@ -27,7 +27,7 @@ import { AdvisorComponent } from './pages/advisor/advisor.component';
   ],
   imports: [
     BrowserModule,
-  // CommonModule removed; provided in standalone components
+    CommonModule,
     RouterModule,
     HttpClientModule,
   FormsModule,

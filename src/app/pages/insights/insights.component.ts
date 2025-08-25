@@ -48,11 +48,18 @@ export class InsightsComponent implements OnInit, OnDestroy {
     }
     this.cumulativeGPA = totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
 
-    // Get last term GPA from last term box
-    if (this.terms.length > 0) {
-      const lastTerm = this.terms[this.terms.length - 1];
+    // Get last non-empty term GPA for last term box
+    let lastTermWithCourses = null;
+    for (let i = this.terms.length - 1; i >= 0; i--) {
+      const term = this.terms[i];
+      if (Array.isArray(term.courses) && term.courses.some((c: any) => c.credits > 0)) {
+        lastTermWithCourses = term;
+        break;
+      }
+    }
+    if (lastTermWithCourses) {
       let lastPoints = 0, lastCredits = 0;
-      for (const c of lastTerm.courses) {
+      for (const c of lastTermWithCourses.courses) {
         if (c.credits > 0) {
           lastPoints += c.gpa * c.credits;
           lastCredits += c.credits;

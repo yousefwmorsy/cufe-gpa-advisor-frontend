@@ -45,6 +45,8 @@ export class GpaTrendChartComponent implements OnChanges {
           label: (context: any) => {
             const label = context.dataset.label || '';
             const value = context.parsed.y;
+            // Show full term name in tooltip
+            const termName = context.chart.data.labels?.[context.dataIndex] || '';
             return `${label}: ${value}`;
           }
         }
@@ -71,10 +73,12 @@ export class GpaTrendChartComponent implements OnChanges {
 
   ngOnChanges(): void {
     if (Array.isArray(this.terms) && this.terms.length) {
-      this.lineChartLabels = this.terms.map((t: any) => t.name);
+      // Exclude semesters with no courses
+      const filteredTerms = this.terms.filter((t: any) => Array.isArray(t.courses) && t.courses.length > 0);
+  this.lineChartLabels = filteredTerms.map((t: any) => t.fullName || (t.name && t.year ? `${t.name} ${t.year}` : t.name));
       this.lineChartData.labels = this.lineChartLabels;
       if (Array.isArray(this.lineChartData.datasets) && this.lineChartData.datasets[0]) {
-        const gpaData = this.terms.map((t: any) => {
+        const gpaData = filteredTerms.map((t: any) => {
           let totalPoints = 0, totalCredits = 0;
           for (const c of t.courses) {
             if (c.credits > 0) {
