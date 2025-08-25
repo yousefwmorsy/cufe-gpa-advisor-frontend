@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranscriptService } from '../../transcript.service';
-import { GpaTrendChartComponent } from './gpa-trend-chart.component';
 
 @Component({
   selector: 'app-transcript',
   templateUrl: './transcript.component.html',
   styleUrls: ['./transcript.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, GpaTrendChartComponent]
+  imports: [FormsModule]
 })
 export class TranscriptComponent implements OnInit {
   showTextPopup = false;

@@ -5,6 +5,7 @@ import { GpaTrendChartComponent } from './gpa-trend-chart.component';
 
 @Component({
   selector: 'app-insights',
+  standalone: true,
   imports: [GpaTrendChartComponent],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.scss'

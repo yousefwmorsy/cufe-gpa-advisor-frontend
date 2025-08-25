@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
+import { Inject } from '@angular/core';
 
 interface NavItem {
   label: string;
@@ -24,7 +25,7 @@ export class SidebarComponent {
     { label: 'AI Advisor', key: 'advisor', route: '/advisor' }
   ];
 
-  constructor(private router: Router) {}
+  constructor(@Inject(Router) private router: Router) {}
 
   getCurrentRouteKey(): string {
     const currentRoute = this.router.url;

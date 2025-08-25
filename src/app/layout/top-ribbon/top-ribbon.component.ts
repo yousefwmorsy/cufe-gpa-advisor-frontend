@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { Inject } from '@angular/core';
 
 @Component({
   selector: 'app-top-ribbon',
@@ -16,8 +17,8 @@ export class TopRibbonComponent {
     '/advisor': 'AI Advisor'
   };
 
-  constructor(private router: Router) {
-    this.router.events.subscribe(event => {
+  constructor(@Inject(Router) private router: Router) {
+  this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects.split('?')[0];
         this.pageTitle = this.titles[url] || 'GPA Advisor';

@@ -1,123 +1,129 @@
 <div class="flex flex-col items-center w-full h-full p-2">
 
-	<!-- Transcript Text Input Popup -->
-	<button (click)="showTextPopup = true" class="mb-4 px-6 py-3 bg-accent text-white rounded-lg font-bold shadow border-2 border-accent transition hover:bg-transparent hover:text-accent hover:border-accent">Paste Transcript Text</button>
+  <!-- Transcript Text Input Popup -->
+  <button (click)="showTextPopup = true" class="mb-4 px-6 py-3 bg-accent text-white rounded-lg font-bold shadow border-2 border-accent transition hover:bg-transparent hover:text-accent hover:border-accent">Paste Transcript Text</button>
 
-	<div *ngIf="showTextPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 backdrop-blur-sm">
-		<div class="bg-dark rounded-lg shadow-lg p-6 w-full max-w-xl flex flex-col">
-			<h2 class="text-lg font-bold mb-2">Paste Transcript Text</h2>
-			<textarea [(ngModel)]="transcriptText" rows="12" class="w-full p-2 border text-dark rounded mb-4 font-mono text-sm" placeholder="Paste transcript text here..."></textarea>
-			<div class="flex justify-end gap-2">
-				<button (click)="showTextPopup = false" class="px-4 py-2 rounded bg-gray-300 text-dark hover:bg-gray-400">Cancel</button>
-				<button (click)="confirmTranscriptText()" class="px-4 py-2 rounded bg-accent text-white font-bold hover:bg-transparent border-accent border-2 hover:text-accent hover:border-accent">Confirm</button>
-			</div>
-		</div>
-	</div>
+  @if (showTextPopup) {
+    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 backdrop-blur-sm">
+      <div class="bg-dark rounded-lg shadow-lg p-6 w-full max-w-xl flex flex-col">
+        <h2 class="text-lg font-bold mb-2">Paste Transcript Text</h2>
+        <textarea [(ngModel)]="transcriptText" rows="12" class="w-full p-2 border text-dark rounded mb-4 font-mono text-sm" placeholder="Paste transcript text here..."></textarea>
+        <div class="flex justify-end gap-2">
+          <button (click)="showTextPopup = false" class="px-4 py-2 rounded bg-gray-300 text-dark hover:bg-gray-400">Cancel</button>
+          <button (click)="confirmTranscriptText()" class="px-4 py-2 rounded bg-accent text-white font-bold hover:bg-transparent border-accent border-2 hover:text-accent hover:border-accent">Confirm</button>
+        </div>
+      </div>
+    </div>
+  }
 
-		<!-- Transcript Data Table with Tabs -->
-		<div class="w-full max-w-4xl mt-4">
-									<div class="flex mb-2 border-b border-gray-300 items-center overflow-x-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-gray-200" style="white-space: nowrap;">
-											<ng-container *ngFor="let term of terms; let i = index">
-												<div class="flex items-center mr-2"
-													*ngIf="true"
-        
-												>
-													<button
-														(click)="selectTerm(i)"
-														[class.bg-accent]="selectedTermIdx === i"
-														[class.text-white]="selectedTermIdx === i"
-														[class.font-bold]="selectedTermIdx === i"
-														[class.shadow-accent]="selectedTermIdx === i"
-														[class.bg-gray-100]="selectedTermIdx !== i"
-														[class.text-gray-900]="selectedTermIdx !== i"
-														class="px-6 py-4 rounded-t-lg transition-all border-b-2 border-accent flex flex-col items-center justify-center"
-														style="height: 64px; min-width: 90px;"
-													>
-														<ng-container *ngIf="editTerms; else showNameYear">
-															<input [(ngModel)]="term.name" class="w-24 px-2 py-1 rounded bg-transparent border border-gray-300 text-center font-bold focus:outline-none mb-1" />
-															<input [(ngModel)]="term.year" type="text" class="w-20 px-1 py-1 rounded bg-transparent border border-gray-200 text-center text-xs focus:outline-none" placeholder="Year" />
-														</ng-container>
-														<ng-template #showNameYear>
-															<span class="font-bold">{{ term.name }}</span>
-															<span class="text-xs font-bold mt-1">{{ term.year || '' }}</span>
-														</ng-template>
-													</button>
-													<button
-														*ngIf="editTerms && terms.length > 1"
-														(click)="deleteTerm(i)"
-														class="ml-1 w-6 h-6 flex items-center justify-center rounded-full bg-transparent hover:bg-red-100 text-red-600 font-bold"
-														title="Delete Term"
-													>
-														&times;
-													</button>
-												</div>
-											</ng-container>
-											<button
-												(click)="addTerm()"
-												class="ml-2 flex items-center justify-center w-8 h-8 rounded-full transition-colors border-none bg-transparent hover:bg-gray-200"
-												title="Add Term"
-												style="font-size: 1.5rem;"
-											>
-												<span class="text-accent font-bold">+</span>
-											</button>
-											<button
-												(click)="editTerms = !editTerms"
-												class="ml-2 flex items-center justify-center w-20 h-8 rounded transition-colors border-none bg-transparent hover:bg-gray-200 text-accent font-bold"
-												title="Edit Terms"
-											>
-												{{ editTerms ? 'Done' : 'Edit' }}
-											</button>
-									</div>
-                                    
-			<table class="w-full border-collapse rounded-lg shadow-lg bg-white text-gray-900">
-				<thead>
-					<tr class="bg-accent text-white">
-						<th class="p-3">Course Name</th>
-						<th class="p-3 text-center">Credits</th>
-						<th class="p-3 text-center">Grade</th>
-						<th class="p-3 text-center">GPA</th>
-						<th class="p-3 text-center">Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr *ngFor="let course of terms[selectedTermIdx].courses; let ci = index">
-						<td class="p-2">
-							<input [(ngModel)]="course.name" class="w-full p-2 border rounded" />
-						</td>
-						<td class="p-2 text-center">
-							<input type="number" [(ngModel)]="course.credits" class="w-16 p-2 border rounded text-center" [disabled]="course.grade === 'IC' || course.grade === 'W' || course.grade === 'FW'" min="0" (ngModelChange)="onCreditsChange(course)" />
-						</td>
-						<td class="p-2 text-center">
-							<select [(ngModel)]="course.grade" (change)="onGradeChange(course)" class="w-20 p-2 border rounded text-center">
-								<option *ngFor="let g of gradeOptions" [value]="g.value">{{ g.label }}</option>
-							</select>
-						</td>
-						<td class="p-2 text-center">
-							<input type="text" [value]="course.gpa" class="w-16 p-2 border rounded text-center bg-gray-100" readonly />
-						</td>
-						<td class="p-2 text-center">
-							<button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="terms[selectedTermIdx].courses.splice(ci, 1)">Delete</button>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="5" class="p-2 text-right">
-							<button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white" (click)="terms[selectedTermIdx].courses.push({ name: '', credits: 0, grade: '', gpa: 0 })">Add Course</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		<!-- GPA Boxes -->
-		<div class="w-full border-collapse flex mt-6 mb-2">
-			<div class="w-1/2 pr-2">
-				<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
-					<div class="text-s text-gray-500 mb-1 group-hover:text-white">Current Term GPA</div>
-					<div class="text-2xl font-bold text-accent group-hover:text-white">{{ currentTermGPA }}</div>
-				</div>
-			</div>
-			<div class="w-1/2 pl-2">
-				<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
-					<div class="text-s text-gray-500 mb-1 group-hover:text-white">Cumulative GPA</div>
-					<div class="text-2xl font-bold text-accent group-hover:text-white">{{ cumulativeGPA }}</div>
-				</div>
-			</div>
-		</div>
+  <!-- Transcript Data Table with Tabs -->
+  <div class="w-full max-w-4xl mt-4">
+    <div class="flex mb-2 border-b border-gray-300 items-center overflow-x-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-gray-200" style="white-space: nowrap;">
+      @for (term of terms; track term; let i = $index) {
+        @if (true) {
+          <div class="flex items-center mr-2"
+            >
+            <button
+              (click)="selectTerm(i)"
+              [class.bg-accent]="selectedTermIdx === i"
+              [class.text-white]="selectedTermIdx === i"
+              [class.font-bold]="selectedTermIdx === i"
+              [class.shadow-accent]="selectedTermIdx === i"
+              [class.bg-gray-100]="selectedTermIdx !== i"
+              [class.text-gray-900]="selectedTermIdx !== i"
+              class="px-6 py-4 rounded-t-lg transition-all border-b-2 border-accent flex flex-col items-center justify-center"
+              style="height: 64px; min-width: 90px;"
+              >
+              @if (editTerms) {
+                <input [(ngModel)]="term.name" class="w-24 px-2 py-1 rounded bg-transparent border border-gray-300 text-center font-bold focus:outline-none mb-1" />
+                <input [(ngModel)]="term.year" type="text" class="w-20 px-1 py-1 rounded bg-transparent border border-gray-200 text-center text-xs focus:outline-none" placeholder="Year" />
+              } @else {
+                <span class="font-bold">{{ term.name }}</span>
+                <span class="text-xs font-bold mt-1">{{ term.year || '' }}</span>
+              }
+            </button>
+            @if (editTerms && terms.length > 1) {
+              <button
+                (click)="deleteTerm(i)"
+                class="ml-1 w-6 h-6 flex items-center justify-center rounded-full bg-transparent hover:bg-red-100 text-red-600 font-bold"
+                title="Delete Term"
+                >
+                &times;
+              </button>
+            }
+          </div>
+        }
+      }
+      <button
+        (click)="addTerm()"
+        class="ml-2 flex items-center justify-center w-8 h-8 rounded-full transition-colors border-none bg-transparent hover:bg-gray-200"
+        title="Add Term"
+        style="font-size: 1.5rem;"
+        >
+        <span class="text-accent font-bold">+</span>
+      </button>
+      <button
+        (click)="editTerms = !editTerms"
+        class="ml-2 flex items-center justify-center w-20 h-8 rounded transition-colors border-none bg-transparent hover:bg-gray-200 text-accent font-bold"
+        title="Edit Terms"
+        >
+        {{ editTerms ? 'Done' : 'Edit' }}
+      </button>
+    </div>
+
+    <table class="w-full border-collapse rounded-lg shadow-lg bg-white text-gray-900">
+      <thead>
+        <tr class="bg-accent text-white">
+          <th class="p-3">Course Name</th>
+          <th class="p-3 text-center">Credits</th>
+          <th class="p-3 text-center">Grade</th>
+          <th class="p-3 text-center">GPA</th>
+          <th class="p-3 text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (course of terms[selectedTermIdx].courses; track course; let ci = $index) {
+          <tr>
+            <td class="p-2">
+              <input [(ngModel)]="course.name" class="w-full p-2 border rounded" />
+            </td>
+            <td class="p-2 text-center">
+              <input type="number" [(ngModel)]="course.credits" class="w-16 p-2 border rounded text-center" [disabled]="course.grade === 'IC' || course.grade === 'W' || course.grade === 'FW'" min="0" (ngModelChange)="onCreditsChange(course)" />
+            </td>
+            <td class="p-2 text-center">
+              <select [(ngModel)]="course.grade" (change)="onGradeChange(course)" class="w-20 p-2 border rounded text-center">
+                @for (g of gradeOptions; track g) {
+                  <option [value]="g.value">{{ g.label }}</option>
+                }
+              </select>
+            </td>
+            <td class="p-2 text-center">
+              <input type="text" [value]="course.gpa" class="w-16 p-2 border rounded text-center bg-gray-100" readonly />
+            </td>
+            <td class="p-2 text-center">
+              <button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="terms[selectedTermIdx].courses.splice(ci, 1)">Delete</button>
+            </td>
+          </tr>
+        }
+        <tr>
+          <td colspan="5" class="p-2 text-right">
+            <button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white" (click)="terms[selectedTermIdx].courses.push({ name: '', credits: 0, grade: '', gpa: 0 })">Add Course</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- GPA Boxes -->
+    <div class="w-full border-collapse flex mt-6 mb-2">
+      <div class="w-1/2 pr-2">
+        <div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+          <div class="text-s text-gray-500 mb-1 group-hover:text-white">Current Term GPA</div>
+          <div class="text-2xl font-bold text-accent group-hover:text-white">{{ currentTermGPA }}</div>
+        </div>
+      </div>
+      <div class="w-1/2 pl-2">
+        <div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+          <div class="text-s text-gray-500 mb-1 group-hover:text-white">Cumulative GPA</div>
+          <div class="text-2xl font-bold text-accent group-hover:text-white">{{ cumulativeGPA }}</div>
+        </div>
+      </div>
+    </div>

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { NgChartsModule } from 'ng2-charts';
 import { AppComponent } from './app.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopRibbonComponent } from './layout/top-ribbon/top-ribbon.component';
@@ -26,10 +27,11 @@ import { AdvisorComponent } from './pages/advisor/advisor.component';
   ],
   imports: [
     BrowserModule,
-    CommonModule,
+  // CommonModule removed; provided in standalone components
     RouterModule,
     HttpClientModule,
-    FormsModule
+  FormsModule,
+  NgChartsModule
   ],
   bootstrap: [AppComponent]
 })
