@@ -1,92 +1,20 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { TranscriptService } from '../../transcript.service';
+import { GpaTrendChartComponent } from './gpa-trend-chart.component';
+
 @Component({
   selector: 'app-transcript',
   templateUrl: './transcript.component.html',
   styleUrls: ['./transcript.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, GpaTrendChartComponent]
 })
 export class TranscriptComponent implements OnInit {
   showTextPopup = false;
   transcriptText = '';
-
-  ngOnInit() {
-    // Load terms from localStorage if available
-    const saved = localStorage.getItem('transcript_terms');
-    if (saved) {
-      try {
-        this.terms = JSON.parse(saved);
-      } catch {}
-    }
-  }
-
-  confirmTranscriptText() {
-    this.showTextPopup = false;
-    fetch('http://localhost:8000/parse-transcript', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: this.transcriptText })
-    })
-      .then(res => res.json())
-      .then(data => {
-        // Convert API response to terms format for tabs and course info
-        this.terms = Object.entries(data).map(([termKey, courses]) => {
-          // Split termKey into name and year if possible
-          const match = termKey.match(/^(\w+)-(\d{4})$/);
-          let name = termKey, year = '';
-          if (match) {
-            name = match[1];
-            year = match[2];
-          }
-          return {
-            name,
-            year,
-            courses: (courses as any[]).map((c: any) => ({
-              name: c.course_title,
-              credits: c.hours,
-              grade: c.grade,
-              gpa: this.gradeToGpaMap[c.grade] || 0
-            }))
-          };
-        });
-        // Save to localStorage for persistence
-        localStorage.setItem('transcript_terms', JSON.stringify(this.terms));
-        this.selectedTermIdx = 0;
-      })
-      .catch(err => {
-        console.error('Error parsing transcript:', err);
-      });
-  }
-  get currentTermGPA(): number {
-    const courses = this.terms[this.selectedTermIdx]?.courses || [];
-    let totalPoints = 0, totalCredits = 0;
-    for (const c of courses) {
-      if (c.credits > 0) {
-        totalPoints += c.gpa * c.credits;
-        totalCredits += c.credits;
-      }
-    }
-    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
-  }
-
-  get cumulativeGPA(): number {
-    let totalPoints = 0, totalCredits = 0;
-    for (const term of this.terms) {
-      for (const c of term.courses) {
-        if (c.credits > 0) {
-          totalPoints += c.gpa * c.credits;
-          totalCredits += c.credits;
-        }
-      }
-    }
-    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
-  }
-  onCreditsChange(course: any): void {
-    if (course.credits < 0) {
-      course.credits = 0;
-    }
-  }
-  editTerms = false;
-  pdfUrl: SafeResourceUrl | null = null;
 
   gradeOptions = [
     { label: 'A+', value: 'A+' },
@@ -134,6 +62,82 @@ export class TranscriptComponent implements OnInit {
     }
   ];
 
+  selectedTermIdx = 0;
+  pdfUrl: SafeResourceUrl | null = null;
+  editTerms: boolean = false;
+
+  constructor(private sanitizer: DomSanitizer, private transcriptService: TranscriptService) {}
+
+  ngOnInit() {
+    this.terms = this.transcriptService.getTerms();
+  }
+
+  confirmTranscriptText() {
+    this.showTextPopup = false;
+    fetch('http://localhost:8000/parse-transcript', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: this.transcriptText })
+    })
+      .then(res => res.json())
+      .then(data => {
+        this.terms = Object.entries(data).map(([termKey, courses]) => {
+          const match = termKey.match(/^(\w+)-(\d{4})$/);
+          let name = termKey, year = '';
+          if (match) {
+            name = match[1];
+            year = match[2];
+          }
+          return {
+            name,
+            year,
+            courses: (courses as any[]).map((c: any) => ({
+              name: c.course_title,
+              credits: c.hours,
+              grade: c.grade,
+              gpa: this.gradeToGpaMap[c.grade] || 0
+            }))
+          };
+        });
+        this.transcriptService.setTerms(this.terms);
+        this.selectedTermIdx = 0;
+      })
+      .catch(err => {
+        console.error('Error parsing transcript:', err);
+      });
+  }
+
+  get currentTermGPA(): number {
+    const courses = this.terms[this.selectedTermIdx]?.courses || [];
+    let totalPoints = 0, totalCredits = 0;
+    for (const c of courses) {
+      if (c.credits > 0) {
+        totalPoints += c.gpa * c.credits;
+        totalCredits += c.credits;
+      }
+    }
+    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+  }
+
+  get cumulativeGPA(): number {
+    let totalPoints = 0, totalCredits = 0;
+    for (const term of this.terms) {
+      for (const c of term.courses) {
+        if (c.credits > 0) {
+          totalPoints += c.gpa * c.credits;
+          totalCredits += c.credits;
+        }
+      }
+    }
+    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+  }
+
+  onCreditsChange(course: any): void {
+    if (course.credits < 0) {
+      course.credits = 0;
+    }
+  }
+
   onGradeChange(course: any): void {
     course.gpa = this.gradeToGpaMap[course.grade] || 0;
     if (["IC", "W", "FW"].includes(course.grade)) {
@@ -142,13 +146,6 @@ export class TranscriptComponent implements OnInit {
       course.credits = 0;
     }
   }
-
-
-
-  selectedTermIdx = 0;
-
-  constructor(private sanitizer: DomSanitizer) {}
-
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -180,7 +177,3 @@ export class TranscriptComponent implements OnInit {
     }
   }
 }
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';

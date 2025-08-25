@@ -1,1 +1,22 @@
-<p>insights works!</p>
+<!-- GPA Insights Page -->
+<div class="w-full flex mt-8 mb-4 gap-4">
+	<div class="flex-1">
+		<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+			<div class="text-s text-gray-500 mb-1 group-hover:text-white">Cumulative GPA</div>
+			<div class="text-2xl font-bold text-accent group-hover:text-white">{{ cumulativeGPA }}</div>
+		</div>
+	</div>
+	<div class="flex-1">
+		<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+			<div class="text-s text-gray-500 mb-1 group-hover:text-white">Last Term GPA</div>
+			<div class="text-2xl font-bold text-accent group-hover:text-white">{{ lastTermGPA }}</div>
+		</div>
+	</div>
+	<div class="flex-1">
+		<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+			<div class="text-s text-gray-500 mb-1 group-hover:text-white">Total Credits</div>
+			<div class="text-2xl font-bold text-accent group-hover:text-white">{{ totalCredits }}</div>
+		</div>
+	</div>
+</div>
+<gpa-trend-chart [terms]="terms"></gpa-trend-chart>
