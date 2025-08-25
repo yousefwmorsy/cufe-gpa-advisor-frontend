@@ -18,8 +18,8 @@ export class InsightsComponent implements OnInit, OnDestroy {
   terms: any[] = [];
   private termsSub?: Subscription;
 
-    topBest: any[] = [];
-    topWorst: any[] = [];
+    bestHalf: any[] = [];
+    worstHalf: any[] = [];
 
   constructor(private transcriptService: TranscriptService) {}
 
@@ -94,21 +94,34 @@ export class InsightsComponent implements OnInit, OnDestroy {
       'C+': 2.3, 'C': 2.0, 'C-': 1.7,
       'D+': 1.3, 'D': 1.0, 'F': 0.0
     };
+    // Grade precedence for tie-breaking (A+ > A > A- > ...)
+    const gradePrecedence = ['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'F'];
 
-    // Calculate factor for each course
-    const coursesWithFactor = allCourses.map(course => {
+    // Sort courses by grade value (desc), then credit hours (desc)
+    const coursesWithGrade = allCourses.map(course => {
       let gradeValue = typeof course.gpa === 'number' ? course.gpa : gradeMap[course.grade] ?? 0;
       return {
         ...course,
-        factor: gradeValue * course.credits,
         gradeValue
       };
     });
 
-    // Sort by factor
-    const sorted = [...coursesWithFactor].sort((a, b) => b.factor - a.factor);
-    this.topBest = sorted.slice(0, 5);
-    this.topWorst = [...coursesWithFactor].sort((a, b) => a.factor - b.factor).slice(0, 5);
+    const sorted = [...coursesWithGrade].sort((a, b) => {
+      if (b.gradeValue !== a.gradeValue) {
+        return b.gradeValue - a.gradeValue;
+      }
+      // If gradeValue is the same, use gradePrecedence
+      const aPrec = gradePrecedence.indexOf(a.grade);
+      const bPrec = gradePrecedence.indexOf(b.grade);
+      if (aPrec !== bPrec) {
+        return aPrec - bPrec;
+      }
+      // If still tied, use credits
+      return b.credits - a.credits;
+    });
+  const half = Math.ceil(sorted.length / 2);
+  this.bestHalf = sorted.slice(0, half);
+  this.worstHalf = sorted.slice(half).reverse();
     // --- End Top 5 Logic ---
   }
 }

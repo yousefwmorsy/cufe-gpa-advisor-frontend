@@ -1,5 +1,5 @@
 
-<div class="w-full flex justify-center items-center py-6">
+<div class="w-full flex justify-center items-center mt-4">
   <div class="bg-white w-full rounded-lg shadow border border-gray-200 p-4" style="background:#f8f9fa; max-width:100%; height:auto;">
     <canvas baseChart
       [data]="lineChartData"
@@ -7,7 +7,6 @@
       [options]="lineChartOptions"
   [legend]="false"
       [type]="'line'"
-      class="w-full h-64"
     ></canvas>
     <div *ngIf="!lineChartData?.datasets?.length || !lineChartData.datasets[0].data.length" class="text-center text-fuchsia-700 font-mono font-bold mt-6">No GPA data yet</div>
   </div>

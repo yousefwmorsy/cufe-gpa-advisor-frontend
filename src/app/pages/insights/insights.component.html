@@ -21,39 +21,40 @@
 </div>
 <gpa-trend-chart [terms]="terms"></gpa-trend-chart>
 <!-- Top 5 Best & Worst Subjects Section -->
-<div class="top-subjects-container flex flex-col md:flex-row gap-4 mt-8">
-	<!-- Best Subjects -->
-	<div class="flex-1">
-		<div class="subject-box best border-fuchsia-700 border-2 rounded-lg bg-white shadow p-4">
-			<h3 class="text-lg font-semibold mb-3 text-fuchsia-700">Top 5 Best Subjects</h3>
-			<div *ngIf="topBest.length; else noBest">
-				<div *ngFor="let subj of topBest" class="subject-card mb-2 last:mb-0 rounded-lg border border-fuchsia-100 p-3 flex items-center gap-4 bg-fuchsia-50">
-					<div class="flex-1">
-						<div class="font-medium">{{ subj.name || subj.courseName }}</div>
-						<div class="text-xs text-gray-500">Grade: <span class="font-bold">{{ subj.grade }}</span> &bull; Credits: <span class="font-bold">{{ subj.credits }}</span></div>
+<div class="top-subjects-container flex flex-col md:flex-row gap-4 mt-4">
+		<!-- Best Half Subjects -->
+		<div class="flex-1">
+			<div class="subject-box best border-accent border-2 rounded-lg bg-white shadow p-4">
+				<h3 class="text-lg font-semibold mb-3 text-accent">Top {{ bestHalf.length }} Subjects</h3>
+				<div class="scroll-list" *ngIf="bestHalf.length; else noBest">
+							  <div *ngFor="let subj of bestHalf; let i = index" 
+								class="subject-card mb-2 last:mb-0 rounded-lg border p-3 flex items-center gap-4 text-accent accent-card border-accent">
+								<div class="flex-1">
+									<div class="font-medium">{{ subj.name || subj.courseName }}</div>
+									<div class="text-xs text-gray-500">Grade: <span class="font-bold">{{ subj.grade }}</span> &bull; Credits: <span class="font-bold">{{ subj.credits }}</span></div>
+								</div>
+							</div>
+				</div>
+				<ng-template #noBest>
+					<div class="text-gray-400 text-sm">No subjects found.</div>
+				</ng-template>
+			</div>
+		</div>
+		<!-- Worst Half Subjects -->
+		<div class="flex-1">
+			<div class="subject-box worst border-gray-300 border-2 rounded-lg bg-white shadow p-4">
+				<h3 class="text-lg font-semibold mb-3 text-gray-700">Worst {{ worstHalf.length }} Subjects</h3>
+				<div class="scroll-list" *ngIf="worstHalf.length; else noWorst">
+					<div *ngFor="let subj of worstHalf" class="subject-card mb-2 last:mb-0 rounded-lg border border-gray-200 p-3 flex items-center gap-4 bg-gray-50">
+						<div class="flex-1">
+							<div class="font-medium text-gray-700">{{ subj.name || subj.courseName }}</div>
+							<div class="text-xs text-gray-500">Grade: <span class="font-bold">{{ subj.grade }}</span> &bull; Credits: <span class="font-bold">{{ subj.credits }}</span></div>
+						</div>
 					</div>
 				</div>
+				<ng-template #noWorst>
+					<div class="text-gray-400 text-sm">No subjects found.</div>
+				</ng-template>
 			</div>
-			<ng-template #noBest>
-				<div class="text-gray-400 text-sm">No subjects found.</div>
-			</ng-template>
 		</div>
-	</div>
-	<!-- Worst Subjects -->
-	<div class="flex-1">
-		<div class="subject-box worst border-gray-300 border-2 rounded-lg bg-white shadow p-4">
-			<h3 class="text-lg font-semibold mb-3 text-gray-700">Top 5 Worst Subjects</h3>
-			<div *ngIf="topWorst.length; else noWorst">
-				<div *ngFor="let subj of topWorst" class="subject-card mb-2 last:mb-0 rounded-lg border border-gray-200 p-3 flex items-center gap-4 bg-gray-50">
-					<div class="flex-1">
-						<div class="font-medium">{{ subj.name || subj.courseName }}</div>
-						<div class="text-xs text-gray-500">Grade: <span class="font-bold">{{ subj.grade }}</span> &bull; Credits: <span class="font-bold">{{ subj.credits }}</span></div>
-					</div>
-				</div>
-			</div>
-			<ng-template #noWorst>
-				<div class="text-gray-400 text-sm">No subjects found.</div>
-			</ng-template>
-		</div>
-	</div>
 </div>
