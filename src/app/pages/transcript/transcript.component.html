@@ -101,13 +101,13 @@
               <input type="text" [value]="course.gpa" class="w-16 p-2 border rounded text-center bg-gray-100" readonly />
             </td>
             <td class="p-2 text-center">
-              <button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="terms[selectedTermIdx].courses.splice(ci, 1)">Delete</button>
+              <button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="deleteCourse(ci)">Delete</button>
             </td>
           </tr>
         }
         <tr>
           <td colspan="5" class="p-2 text-right">
-            <button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white" (click)="terms[selectedTermIdx].courses.push({ name: '', credits: 0, grade: '', gpa: 0 })">Add Course</button>
+            <button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white" (click)="addCourse({ name: '', credits: 0, grade: '', gpa: 0 })">Add Course</button>
           </td>
         </tr>
       </tbody>

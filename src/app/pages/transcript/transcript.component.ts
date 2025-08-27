@@ -12,6 +12,17 @@ import { TranscriptService } from '../../transcript.service';
   imports: [FormsModule]
 })
 export class TranscriptComponent implements OnInit {
+  addCourse(course: any) {
+    const termIdx = this.selectedTermIdx;
+    this.transcriptService.addCourse(termIdx, course);
+    this.terms = this.transcriptService.getTerms();
+  }
+
+  deleteCourse(courseIdx: number) {
+    const termIdx = this.selectedTermIdx;
+    this.transcriptService.deleteCourse(termIdx, courseIdx);
+    this.terms = this.transcriptService.getTerms();
+  }
   showTextPopup = false;
   transcriptText = '';
 
@@ -50,16 +61,7 @@ export class TranscriptComponent implements OnInit {
     'W': 0.00,
     'FW': 0.00
   };
-  terms = [
-    {
-      name: 'Spring',
-      year: '2025',
-      courses: [
-        { name: 'Linear Algebra', credits: 3, grade: 'A-', gpa: 3.70 },
-        { name: 'Chemistry', credits: 3, grade: 'B', gpa: 3.00 }
-      ]
-    }
-  ];
+  terms: any[] = [];
 
   selectedTermIdx = 0;
   pdfUrl: SafeResourceUrl | null = null;
@@ -68,7 +70,7 @@ export class TranscriptComponent implements OnInit {
   constructor(private sanitizer: DomSanitizer, private transcriptService: TranscriptService) {}
 
   ngOnInit() {
-    this.terms = this.transcriptService.getTerms();
+  this.terms = this.transcriptService.getTerms();
   }
 
   confirmTranscriptText() {
@@ -135,6 +137,13 @@ export class TranscriptComponent implements OnInit {
     if (course.credits < 0) {
       course.credits = 0;
     }
+    // Persist course change
+    const termIdx = this.selectedTermIdx;
+    const courseIdx = this.terms[termIdx].courses.indexOf(course);
+    if (termIdx > -1 && courseIdx > -1) {
+      this.transcriptService.updateCourse(termIdx, courseIdx, course);
+      this.terms = this.transcriptService.getTerms();
+    }
   }
 
   onGradeChange(course: any): void {
@@ -143,6 +152,13 @@ export class TranscriptComponent implements OnInit {
       course.credits = 0;
     } else if (course.credits < 0) {
       course.credits = 0;
+    }
+    // Persist course change
+    const termIdx = this.selectedTermIdx;
+    const courseIdx = this.terms[termIdx].courses.indexOf(course);
+    if (termIdx > -1 && courseIdx > -1) {
+      this.transcriptService.updateCourse(termIdx, courseIdx, course);
+      this.terms = this.transcriptService.getTerms();
     }
   }
 
@@ -161,16 +177,18 @@ export class TranscriptComponent implements OnInit {
 
   addTerm() {
     const newTermIdx = this.terms.length + 1;
-    this.terms.push({
+    this.transcriptService.addTerm({
       name: `Term ${newTermIdx}`,
       year: '',
       courses: []
     });
+    this.terms = this.transcriptService.getTerms();
     this.selectedTermIdx = this.terms.length - 1;
   }
 
   deleteTerm(idx: number) {
-    this.terms.splice(idx, 1);
+    this.transcriptService.deleteTerm(idx);
+    this.terms = this.transcriptService.getTerms();
     if (this.selectedTermIdx >= this.terms.length) {
       this.selectedTermIdx = this.terms.length - 1;
     }
