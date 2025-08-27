@@ -75,37 +75,68 @@ export class TranscriptComponent implements OnInit {
 
   confirmTranscriptText() {
     this.showTextPopup = false;
-    fetch('http://localhost:8000/parse-transcript', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: this.transcriptText })
-    })
-      .then(res => res.json())
-      .then(data => {
-        this.terms = Object.entries(data).map(([termKey, courses]) => {
-          const match = termKey.match(/^(\w+)-(\d{4})$/);
-          let name = termKey, year = '';
-          if (match) {
-            name = match[1];
-            year = match[2];
-          }
-          return {
-            name,
-            year,
-            courses: (courses as any[]).map((c: any) => ({
-              name: c.course_title,
-              credits: c.hours,
-              grade: c.grade,
-              gpa: this.gradeToGpaMap[c.grade] || 0
-            }))
-          };
-        });
-        this.transcriptService.setTerms(this.terms);
-        this.selectedTermIdx = 0;
-      })
-      .catch(err => {
-        console.error('Error parsing transcript:', err);
+    try {
+      const data = this.parseTranscriptText(this.transcriptText);
+      this.terms = Object.entries(data).map(([termKey, courses]) => {
+        const match = termKey.match(/^(\w+)-(\d{4})$/);
+        let name = termKey, year = '';
+        if (match) {
+          name = match[1];
+          year = match[2];
+        }
+        return {
+          name,
+          year,
+          courses: (courses as any[]).map((c: any) => ({
+            name: c.course_title,
+            credits: c.hours,
+            grade: c.grade,
+            gpa: this.gradeToGpaMap[c.grade] || 0
+          }))
+        };
       });
+      this.transcriptService.setTerms(this.terms);
+      this.selectedTermIdx = 0;
+    } catch (err) {
+      console.error('Error parsing transcript:', err);
+    }
+  }
+
+  // Parses transcript text using regex, matching backend logic
+  parseTranscriptText(text: string): Record<string, any[]> {
+    const semesters: Record<string, any[]> = {};
+    const semesterPattern = /(Fall|Spring|Summer|Winter)-\d{4}/;
+    const lines = text.split(/\r?\n/);
+    let currentSemester: string | null = null;
+    for (let line of lines) {
+      line = line.trim();
+      // Check for semester header
+      const match = semesterPattern.exec(line);
+      if (match) {
+        currentSemester = match[0];
+        semesters[currentSemester] = [];
+        continue;
+      }
+      // Skip empty lines and non-course lines
+      if (!line || !currentSemester) {
+        continue;
+      }
+      // Try to match a course row (Course No, Title, Grade, Hours, Quality Points)
+      const courseRow = line.match(/^([\w]+)\s+([A-Za-z0-9,\-\s]+)\s+([A-Za-z\+\-]+)\s+(\d+)\s+([\d\.]+)/);
+      if (courseRow) {
+        const courseTitle = courseRow[2].trim();
+        const grade = courseRow[3].trim();
+        const hours = parseInt(courseRow[4], 10);
+        if (grade !== "UNKNOWN") {
+          semesters[currentSemester].push({
+            course_title: courseTitle,
+            grade: grade,
+            hours: hours,
+          });
+        }
+      }
+    }
+    return semesters;
   }
 
   get currentTermGPA(): number {

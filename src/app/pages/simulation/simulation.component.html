@@ -1,4 +1,20 @@
+
+
 <div class="flex flex-col items-center w-full h-full p-2">
+    <!-- Scenario Save/Load Buttons -->
+    <div class="w-full max-w-4xl flex gap-4 mb-4 justify-end">
+        <div class="flex-1 flex items-center justify-center">
+            <div class="bg-gray-100 border border-accent rounded px-4 py-2 w-full text-xs text-justify font-bold text-gray-700">
+                This page is intended for simulation, simulation is discarded when the page is closed or refreshed, please save your scenario for future access.
+            </div>
+        </div>
+        <button class="px-4 py-2 bg-accent text-white rounded font-bold shadow hover:bg-blue-700" (click)="saveScenario()">Save Scenario</button>
+        <label class="px-4 py-2 bg-gray-300 text-gray-900 rounded font-bold shadow cursor-pointer hover:bg-gray-400">
+            <span class="flex items-center h-full justify-center">Load Scenario</span>
+            <input type="file" accept="application/json" style="display:none" (change)="loadScenario($event)" />
+        </label>
+    </div>
+
 	<!-- Top Bar: Simulation Status -->
 	<div class="w-full max-w-4xl mb-6">
 		<div class="flex items-center justify-between bg-white border border-accent rounded-lg shadow px-6 py-4">
@@ -31,14 +47,7 @@
 		</div>
 	</div>
 
-		<!-- Scenario Save/Load Buttons -->
-		<div class="w-full max-w-4xl flex gap-4 mb-2 justify-end">
-			<button class="px-4 py-2 bg-accent text-white rounded font-bold shadow hover:bg-blue-700" (click)="saveScenario()">Save Scenario</button>
-			<label class="px-4 py-2 bg-gray-300 text-gray-900 rounded font-bold shadow cursor-pointer hover:bg-gray-400">
-				Load Scenario
-				<input type="file" accept="application/json" style="display:none" (change)="loadScenario($event)" />
-			</label>
-		</div>
+
 
 		<!-- Term Tabs -->
 		<div class="w-full max-w-4xl mt-2">
