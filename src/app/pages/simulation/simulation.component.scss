@@ -1,0 +1,146 @@
+/* Simulation Page Styles */
+.border-accent {
+	border-color: #3b82f6;
+}
+.text-accent {
+	color: #3b82f6;
+}
+.bg-accent {
+	background-color: #3b82f6;
+}
+.shadow-accent {
+	box-shadow: 0 2px 8px 0 #3b82f6;
+}
+.rounded-lg {
+	border-radius: 0.75rem;
+}
+.font-bold {
+	font-weight: bold;
+}
+.group:hover .group-hover\:text-white {
+	color: #fff !important;
+}
+.group:hover .group-hover\:bg-accent {
+	background-color: #3b82f6 !important;
+}
+.group:hover .group-hover\:border-accent {
+	border-color: #3b82f6 !important;
+}
+.group:hover .group-hover\:shadow-xl {
+	box-shadow: 0 4px 16px 0 #3b82f6 !important;
+}
+.transition-all {
+	transition: all 0.2s;
+}
+.scrollbar-thumb-accent {
+	scrollbar-color: #3b82f6 #e5e7eb;
+}
+.scrollbar-track-gray-200 {
+	scrollbar-color: #e5e7eb #fff;
+}
+.text-green-600 {
+	color: #16a34a;
+}
+.text-red-600 {
+	color: #dc2626;
+}
+.bg-gray-100 {
+	background-color: #f3f4f6;
+}
+.text-gray-900 {
+	color: #111827;
+}
+.text-gray-500 {
+	color: #6b7280;
+}
+.bg-white {
+	background-color: #fff;
+}
+.bg-red-600 {
+	background-color: #dc2626;
+}
+.hover\:bg-red-700:hover {
+	background-color: #b91c1c;
+}
+.hover\:bg-accent:hover {
+	background-color: #3b82f6;
+	color: #fff;
+}
+.hover\:text-white:hover {
+	color: #fff;
+}
+.hover\:shadow-accent:hover {
+	box-shadow: 0 4px 16px 0 #3b82f6;
+}
+.hover\:border-accent:hover {
+	border-color: #3b82f6;
+}
+.hover\:text-accent:hover {
+	color: #3b82f6;
+}
+.rounded-t-lg {
+	border-top-left-radius: 0.75rem;
+	border-top-right-radius: 0.75rem;
+}
+.rounded-full {
+	border-radius: 9999px;
+}
+.p-2 {
+	padding: 0.5rem;
+}
+.p-3 {
+	padding: 0.75rem;
+}
+.px-6 {
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+.py-4 {
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+}
+.mb-6 {
+	margin-bottom: 1.5rem;
+}
+.mb-4 {
+	margin-bottom: 1rem;
+}
+.mt-2 {
+	margin-top: 0.5rem;
+}
+.mt-6 {
+	margin-top: 1.5rem;
+}
+.w-full {
+	width: 100%;
+}
+.max-w-3xl {
+	max-width: 48rem;
+}
+.max-w-4xl {
+	max-width: 56rem;
+}
+.flex {
+	display: flex;
+}
+.flex-col {
+	flex-direction: column;
+}
+.flex-1 {
+	flex: 1 1 0%;
+}
+.items-center {
+	align-items: center;
+}
+.justify-between {
+	justify-content: space-between;
+}
+.gap-4 {
+	gap: 1rem;
+}
+.pr-2 {
+	padding-right: 0.5rem;
+}
+.pl-2 {
+	padding-left: 0.5rem;
+}

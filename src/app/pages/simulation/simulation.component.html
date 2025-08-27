@@ -1,1 +1,151 @@
-<p>simulation works!</p>
+<div class="flex flex-col items-center w-full h-full p-2">
+	<!-- Top Bar: Simulation Status -->
+	<div class="w-full max-w-4xl mb-6">
+		<div class="flex items-center justify-between bg-white border border-accent rounded-lg shadow px-6 py-4">
+			<div>
+				<span class="font-bold text-lg text-dark mr-2">Simulation Status:</span>
+				<span [class.text-green-600]="possible" [class.text-red-600]="!possible" class="font-bold">
+					{{ possible ? 'Possible' : 'Not Possible' }}
+				</span>
+			</div>
+			<div>
+				<span class="text-gray-500 mr-2">Simulated GPA:</span>
+				<span class="font-bold text-accent text-xl">{{ simulatedGPA }}</span>
+			</div>
+			<div>
+				<span class="text-gray-500 mr-2">Target GPA:</span>
+				<span class="font-bold text-accent text-xl">{{ targetGPA }}</span>
+			</div>
+		</div>
+	</div>
+
+	<!-- Simulation Inputs -->
+	<div class="w-full max-w-4xl flex gap-4 mb-4">
+		<div class="flex flex-col flex-1">
+			<label class="font-bold mb-1 text-accent">Target GPA</label>
+			<input type="number" [(ngModel)]="targetGPA" min="0" max="4" step="0.01" class="p-2 border rounded text-center font-bold text-lg text-accent" />
+		</div>
+		<div class="flex flex-col flex-1">
+			<label class="font-bold mb-1 text-accent">Number of Future Terms</label>
+			<input type="number" [(ngModel)]="numTerms" (ngModelChange)="onInputChange()" min="1" max="12" class="p-2 border rounded text-center font-bold text-lg text-accent" />
+		</div>
+	</div>
+
+		<!-- Scenario Save/Load Buttons -->
+		<div class="w-full max-w-4xl flex gap-4 mb-2 justify-end">
+			<button class="px-4 py-2 bg-accent text-white rounded font-bold shadow hover:bg-blue-700" (click)="saveScenario()">Save Scenario</button>
+			<label class="px-4 py-2 bg-gray-300 text-gray-900 rounded font-bold shadow cursor-pointer hover:bg-gray-400">
+				Load Scenario
+				<input type="file" accept="application/json" style="display:none" (change)="loadScenario($event)" />
+			</label>
+		</div>
+
+		<!-- Term Tabs -->
+		<div class="w-full max-w-4xl mt-2">
+		<div class="flex mb-2 border-b border-gray-300 items-center overflow-x-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-gray-200" style="white-space: nowrap;">
+			@for (term of terms; track term; let i = $index) {
+				<div class="flex items-center mr-2">
+					<button
+						(click)="selectTerm(i)"
+						[class.bg-accent]="selectedTermIdx === i"
+						[class.text-white]="selectedTermIdx === i"
+						[class.font-bold]="selectedTermIdx === i"
+						[class.shadow-accent]="selectedTermIdx === i"
+						[class.bg-gray-100]="selectedTermIdx !== i"
+						[class.text-gray-900]="selectedTermIdx !== i"
+						class="px-6 py-4 rounded-t-lg transition-all border-b-2 border-accent flex flex-col items-center justify-center"
+						style="height: 64px; min-width: 90px;"
+					>
+						<span class="font-bold">{{ term.name }}</span>
+						<span class="text-xs font-bold mt-1">{{ term.year || '' }}</span>
+					</button>
+				</div>
+			}
+		</div>
+
+		<!-- Transcript Table for Selected Term -->
+			<table class="w-full border-collapse rounded-lg shadow-lg bg-white text-gray-900">
+				<thead>
+					<tr class="bg-accent text-white">
+						<th class="p-3">Course Name</th>
+						<th class="p-3 text-center">Credits</th>
+						<th class="p-3 text-center">Grade</th>
+						<th class="p-3 text-center">GPA</th>
+						<th class="p-3 text-center">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (course of terms[selectedTermIdx].courses; track course; let ci = $index) {
+						<tr>
+							<td class="p-2">
+												@if (selectedTermIdx < terms.length - numTerms) {
+													<input [value]="course.name" class="w-full p-2 border rounded bg-gray-100 text-gray-900" readonly />
+								} @else {
+									<input [(ngModel)]="course.name" class="w-full p-2 border rounded" />
+								}
+							</td>
+							<td class="p-2 text-center">
+												@if (selectedTermIdx < terms.length - numTerms) {
+													<input type="number" [value]="course.credits" class="w-16 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
+								} @else {
+									<input type="number" [(ngModel)]="course.credits" class="w-16 p-2 border rounded text-center" [disabled]="course.grade === 'IC' || course.grade === 'W' || course.grade === 'FW'" min="0" (ngModelChange)="onCreditsChange(course)" />
+								}
+							</td>
+							<td class="p-2 text-center">
+												@if (selectedTermIdx < terms.length - numTerms) {
+													<input type="text" [value]="course.grade" class="w-20 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
+								} @else {
+									<select [(ngModel)]="course.grade" (change)="onGradeChange(course)" class="w-20 p-2 border rounded text-center">
+										@for (g of gradeOptions; track g) {
+											<option [value]="g.value">{{ g.label }}</option>
+										}
+									</select>
+								}
+							</td>
+							<td class="p-2 text-center">
+								<input type="text" [value]="course.gpa" class="w-16 p-2 border rounded text-center bg-gray-100" readonly />
+							</td>
+										<td class="p-2 text-center">
+											@if (selectedTermIdx < terms.length - numTerms) {
+												<button class="px-2 py-1 bg-gray-300 text-gray-500 rounded ml-2 cursor-not-allowed" disabled>Delete</button>
+											} @else {
+												<button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="deleteCourse(ci)">Delete</button>
+											}
+							</td>
+						</tr>
+					}
+							@if (selectedTermIdx < terms.length - numTerms) {
+								<tr>
+									<td colspan="5" class="p-2 text-right">
+														<div class="px-4 py-0.2 text-s w-full bg-gray-300 text-gray-500 rounded cursor-not-allowed text-center">
+															Read-Only
+														</div>
+									</td>
+								</tr>
+							} @else {
+								<tr>
+									<td colspan="5" class="p-2 text-right">
+										<button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white" (click)="addCourse({ name: '', credits: 0, grade: '', gpa: 0 })">Add Course</button>
+									</td>
+								</tr>
+							}
+				</tbody>
+			</table>
+
+		<!-- GPA Box for Current Term -->
+		<div class="w-full border-collapse flex mt-6 mb-2">
+			<div class="w-1/2 pr-2">
+				<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+					<div class="text-s text-gray-500 mb-1 group-hover:text-white">Current Term GPA</div>
+					<div class="text-2xl font-bold text-accent group-hover:text-white">{{ currentTermGPA }}</div>
+				</div>
+			</div>
+			<div class="w-1/2 pl-2">
+				<div class="bg-white border border-accent rounded-lg shadow text-center transition-all duration-200 hover:shadow-xl hover:border-accent hover:bg-accent hover:text-white py-6 group">
+					<div class="text-s text-gray-500 mb-1 group-hover:text-white">Simulated Cumulative GPA</div>
+					<div class="text-2xl font-bold text-accent group-hover:text-white">{{ simulatedGPA }}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
