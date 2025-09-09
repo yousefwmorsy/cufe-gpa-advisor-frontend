@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { Inject } from '@angular/core';
 
@@ -6,9 +7,12 @@ import { Inject } from '@angular/core';
   selector: 'app-top-ribbon',
   templateUrl: './top-ribbon.component.html',
   styleUrls: ['./top-ribbon.component.scss']
+  ,imports: [CommonModule]
 })
 export class TopRibbonComponent {
   pageTitle = '';
+  showBurgerMenu = false;
+  @Output() burgerMenuClicked = new EventEmitter<void>();
   private titles: { [key: string]: string } = {
     '/home': 'Home',
     '/transcript': 'Manage Grades (Transcript)',
@@ -24,5 +28,14 @@ export class TopRibbonComponent {
         this.pageTitle = this.titles[url] || 'GPA Advisor';
       }
     });
+    // Show burger menu on mobile only
+    this.showBurgerMenu = window.innerWidth <= 768;
+    window.addEventListener('resize', () => {
+      this.showBurgerMenu = window.innerWidth <= 768;
+    });
   }
-}
+
+  burgerMenuClick() {
+    this.burgerMenuClicked.emit();
+  }
+  }

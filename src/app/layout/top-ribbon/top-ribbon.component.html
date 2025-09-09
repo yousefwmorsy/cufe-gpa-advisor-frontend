@@ -1,3 +1,11 @@
-<header class="w-full bg-navy/50 backdrop-blur text-gray-100 py-2 text-lg font-bold font-mono shadow-lg flex items-center justify-center tracking-wide drop-shadow-lg">
-	{{ pageTitle }}
+<header class="w-full bg-navy/50 backdrop-blur text-gray-100 text-lg font-bold font-mono shadow-lg flex items-center justify-center tracking-wide drop-shadow-lg relative">
+	<button
+		*ngIf="showBurgerMenu"
+		class="md:hidden absolute left-2 w-10 bg-accent text-white rounded-lg flex items-center justify-center"
+		(click)="burgerMenuClick()"
+		aria-label="Open sidebar"
+	>
+		☰
+	</button>
+	<span class = "py-2">{{ pageTitle }}</span>
 </header>

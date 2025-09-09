@@ -1,17 +1,26 @@
-<aside class="w-[220px] bg-navy text-gray-100 h-screen flex flex-col items-center pt-4 shadow-lg font-mono">
+<aside class="bg-navy text-gray-100 h-screen flex flex-col items-center pt-4 shadow-lg font-mono w-full md:w-[220px] transition-all duration-300 z-50 relative">
+  <!-- Close/collapse button -->
+  <button
+    *ngIf="!isCollapsed"
+    class="md:hidden absolute top-4 right-4 w-10 h-10 bg-accent text-white rounded-lg flex items-center justify-center shadow-lg z-50"
+    (click)="closeSidebarClicked()"
+    aria-label="Close sidebar"
+  >
+    ✕
+  </button>
   <div class="mb-2 flex items-center justify-center w-2/3">
     <img src="gpaadvlogo.svg" alt="Sidebar Logo"/>
   </div>
-  @for (item of navItems; track item) {
+  <ng-container *ngFor="let item of navItems; trackBy: trackByNavItem">
     <button
-      (click)="goToPage(item)"
-									[ngClass]="{
-										'bg-dark text-white font-bold shadow-accent shadow-sm': getCurrentRouteKey() === item.key,
-										'bg-transparent text-gray-100': getCurrentRouteKey() !== item.key
-									}"
+      (click)="goToPage(item); $event.stopPropagation();"
+      [ngClass]="{
+        'bg-dark text-white font-bold shadow-accent shadow-sm': getCurrentRouteKey() === item.key,
+        'bg-transparent text-gray-100': getCurrentRouteKey() !== item.key
+      }"
       class="w-11/12 py-3 px-6 my-2 rounded-lg text-lg transition-all font-mono outline-none hover:bg-accent hover:text-white hover:shadow-lg"
-      >
+    >
       {{ item.label }}
     </button>
-  }
+  </ng-container>
 </aside>

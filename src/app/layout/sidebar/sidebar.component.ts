@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Inject } from '@angular/core';
@@ -17,6 +17,8 @@ interface NavItem {
   imports: [CommonModule, RouterModule]
 })
 export class SidebarComponent {
+  @Input() isCollapsed: boolean = false;
+  @Output() closeSidebar = new EventEmitter<void>();
   navItems: NavItem[] = [
     { label: 'Home', key: 'home', route: '/home' },
     { label: 'Manage Grades', key: 'transcript', route: '/transcript' },
@@ -35,5 +37,13 @@ export class SidebarComponent {
 
   goToPage(item: NavItem): void {
     this.router.navigate([item.route]);
+  }
+
+  closeSidebarClicked(): void {
+    this.closeSidebar.emit();
+  }
+
+  trackByNavItem(index: number, item: NavItem) {
+    return item.key;
   }
 }

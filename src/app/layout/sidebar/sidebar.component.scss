@@ -1,2 +1,33 @@
 .font-mono { font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; }
+@media (max-width: 768px) {
+	aside {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw !important;
+		height: 100vh !important;
+		z-index: 50;
+		background: rgba(20, 20, 40, 0.98);
+		box-shadow: 0 0 0 9999px rgba(20,20,40,0.98);
+		transition: all 0.3s;
+		.sidebar-close-btn {
+			position: absolute;
+			top: 1rem;
+			right: 1rem;
+			width: 2.5rem;
+			height: 2.5rem;
+			background: var(--tw-color-accent, #8a4a4b);
+			color: #fff;
+			border-radius: 0.75rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+			z-index: 100;
+			font-size: 1.5rem;
+			border: none;
+			cursor: pointer;
+		}
+	}
+}
 /* Add more styles as needed */

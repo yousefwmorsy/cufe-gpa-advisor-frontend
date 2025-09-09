@@ -14,4 +14,23 @@ import { TopRibbonComponent } from './layout/top-ribbon/top-ribbon.component';
 })
 export class AppComponent {
   title = 'gpa-advisor-frontend';
+  sidebarOpen = false;
+  sidebarCollapsed = false;
+
+
+  get isMobile(): boolean {
+    return window.innerWidth <= 768;
+  }
+
+  toggleSidebar() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  toggleSidebarMobile() {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  toggleSidebarDesktop() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
 }
