@@ -17,7 +17,15 @@ export class TranscriptService {
   }
 
   getTerms(): any[] {
-    return this.termsSubject.getValue();
+    const terms = this.termsSubject.getValue();
+    if (!terms || terms.length === 0) {
+      return [{
+        name: 'Term 1',
+        year: '',
+        courses: []
+      }];
+    }
+    return terms;
   }
 
   setTerms(terms: any[]) {
