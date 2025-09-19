@@ -189,7 +189,7 @@ export class TranscriptComponent implements OnInit {
   onGradeChange(course: any): void {
     course.gpa = this.gpaCalculator['gradeMap'][course.grade] || 0;
     if (["IC", "W", "FW"].includes(course.grade)) {
-      course.credits = 0;
+
     } else if (course.credits < 0) {
       course.credits = 0;
     }

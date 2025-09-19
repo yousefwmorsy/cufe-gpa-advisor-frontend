@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { GpaCalculatorService } from '../../gpa-calculator.service';
 import { CommonModule } from '@angular/common';
 import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
@@ -12,6 +13,8 @@ import { BaseChartDirective } from 'ng2-charts';
 })
 export class GpaTrendChartComponent implements OnChanges {
   @Input() terms: any[] = [];
+
+  constructor(public gpaCalculator: GpaCalculatorService) {}
 
   lineChartData: ChartConfiguration<'line'>['data'] = {
     labels: [],
@@ -75,19 +78,10 @@ export class GpaTrendChartComponent implements OnChanges {
     if (Array.isArray(this.terms) && this.terms.length) {
       // Exclude semesters with no courses
       const filteredTerms = this.terms.filter((t: any) => Array.isArray(t.courses) && t.courses.length > 0);
-  this.lineChartLabels = filteredTerms.map((t: any) => t.fullName || (t.name && t.year ? `${t.name} ${t.year}` : t.name));
+      this.lineChartLabels = filteredTerms.map((t: any) => t.fullName || (t.name && t.year ? `${t.name} ${t.year}` : t.name));
       this.lineChartData.labels = this.lineChartLabels;
       if (Array.isArray(this.lineChartData.datasets) && this.lineChartData.datasets[0]) {
-        const gpaData = filteredTerms.map((t: any) => {
-          let totalPoints = 0, totalCredits = 0;
-          for (const c of t.courses) {
-            if (c.credits > 0) {
-              totalPoints += c.gpa * c.credits;
-              totalCredits += c.credits;
-            }
-          }
-          return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
-        });
+        const gpaData = filteredTerms.map((t: any) => this.gpaCalculator.calculateTermGPA(t));
         this.lineChartData.datasets[0].data = gpaData;
         // Dynamically set y-axis min/max
         const minGPA = Math.min(...gpaData);

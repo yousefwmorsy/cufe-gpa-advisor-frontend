@@ -6,15 +6,15 @@
         <div class="flex-1 flex items-center justify-center">
             <div class="bg-gray-100 border border-accent rounded px-4 py-2 w-full text-xs text-justify font-bold text-gray-700">
                 This page is intended for simulation, simulation is discarded when the page is closed or refreshed, please save your scenario for future access.
-            </div>
+			</div>
+			<!-- end main flex container -->
         </div>
         <button class="px-4 py-2 bg-accent text-white rounded font-bold shadow hover:bg-blue-700" (click)="saveScenario()">Save Scenario</button>
         <label class="px-4 py-2 bg-gray-300 text-gray-900 rounded font-bold shadow cursor-pointer hover:bg-gray-400">
             <span class="flex items-center h-full justify-center">Load Scenario</span>
             <input type="file" accept="application/json" style="display:none" (change)="loadScenario($event)" />
-        </label>
-    </div>
-
+	</label>
+	</div>
 	<!-- Top Bar: Simulation Status -->
 	<div class="w-full max-w-5xl mb-6">
 		<div class="flex items-center justify-between bg-white border border-accent rounded-lg shadow px-6 py-4">
@@ -59,9 +59,10 @@
 						[class.bg-accent]="selectedTermIdx === i"
 						[class.text-white]="selectedTermIdx === i"
 						[class.font-bold]="selectedTermIdx === i"
-						[class.shadow-accent]="selectedTermIdx === i"
+						[class.selected-tab]="selectedTermIdx === i"
 						[class.bg-gray-100]="selectedTermIdx !== i"
 						[class.text-gray-900]="selectedTermIdx !== i"
+						[ngClass]="{'warning-tab': isTermWarning(term) || (editableTermIndexes.has(i) && !isSimulationTerm(term))}"
 						class="px-6 py-4 rounded-t-lg transition-all border-b-2 border-accent flex flex-col items-center justify-center"
 						style="height: 64px; min-width: 90px;"
 					>
@@ -87,22 +88,28 @@
 					@for (course of terms[selectedTermIdx].courses; track course; let ci = $index) {
 						<tr>
 							<td class="p-2">
-												@if (selectedTermIdx < terms.length - numTerms) {
-													<input [value]="course.name" class="w-full p-2 border rounded bg-gray-100 text-gray-900" readonly />
+								@if (!isTermEditable(selectedTermIdx) || (editableTermIndexes.has(selectedTermIdx) && !isSimulationTerm(terms[selectedTermIdx]))) {
+									<input [value]="course.name" class="w-full p-2 border rounded bg-gray-100 text-gray-900" readonly />
 								} @else {
 									<input [(ngModel)]="course.name" class="w-full p-2 border rounded" />
 								}
 							</td>
 							<td class="p-2 text-center">
-												@if (selectedTermIdx < terms.length - numTerms) {
-													<input type="number" [value]="course.credits" class="w-16 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
+								@if (!isTermEditable(selectedTermIdx) || (editableTermIndexes.has(selectedTermIdx) && !isSimulationTerm(terms[selectedTermIdx]))) {
+									<input type="number" [value]="course.credits" class="w-16 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
 								} @else {
 									<input type="number" [(ngModel)]="course.credits" class="w-16 p-2 border rounded text-center" [disabled]="course.grade === 'IC' || course.grade === 'W' || course.grade === 'FW'" min="0" (ngModelChange)="onCreditsChange(course)" />
 								}
 							</td>
 							<td class="p-2 text-center">
-												@if (selectedTermIdx < terms.length - numTerms) {
-													<input type="text" [value]="course.grade" class="w-20 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
+								@if (!isTermEditable(selectedTermIdx)) {
+									<input type="text" [value]="course.grade" class="w-20 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
+								} @else if (isTermWarning(terms[selectedTermIdx]) && !isSimulationTerm(terms[selectedTermIdx])) {
+									<select [(ngModel)]="course.grade" (change)="onGradeChange(course)" class="w-20 p-2 border rounded text-center">
+										@for (g of gradeOptions; track g) {
+											<option [value]="g.value">{{ g.label }}</option>
+										}
+									</select>
 								} @else {
 									<select [(ngModel)]="course.grade" (change)="onGradeChange(course)" class="w-20 p-2 border rounded text-center">
 										@for (g of gradeOptions; track g) {
@@ -114,16 +121,16 @@
 							<td class="p-2 text-center">
 								<input type="text" [value]="course.gpa" class="w-16 p-2 border rounded text-center bg-gray-100" readonly />
 							</td>
-										<td class="p-2 text-center">
-											@if (selectedTermIdx < terms.length - numTerms) {
-												<button class="px-2 py-1 bg-gray-300 text-gray-500 rounded ml-2 cursor-not-allowed" disabled>Delete</button>
-											} @else {
-												<button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="deleteCourse(ci)">Delete</button>
-											}
+							<td class="p-2 text-center">
+								@if (!isTermEditable(selectedTermIdx)) {
+									<button class="px-2 py-1 bg-gray-300 text-gray-500 rounded ml-2 cursor-not-allowed" disabled>Delete</button>
+								} @else {
+									<button class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700 ml-2" (click)="deleteCourse(ci)">Delete</button>
+								}
 							</td>
 						</tr>
 					}
-							@if (selectedTermIdx < terms.length - numTerms) {
+							@if (!isTermEditable(selectedTermIdx)) {
 								<tr>
 									<td colspan="5" class="p-2 text-right">
 														<div class="px-4 py-0.2 text-s w-full bg-gray-300 text-gray-500 rounded cursor-not-allowed text-center">
@@ -134,7 +141,14 @@
 							} @else {
 								<tr>
 									<td colspan="5" class="p-2 text-right">
-										<button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white" (click)="addCourse({ name: '', credits: 0, grade: '', gpa: 0 })">Add Course</button>
+										
+										@if (!isSimulationTerm(terms[selectedTermIdx])) {
+											<div class="px-4 py-0.2 text-s w-full bg-yellow-100 text-yellow-800 rounded text-center">
+												Edit Grade Only
+											</div>										
+										} @else {
+											<button class="px-4 py-0.2 text-s border w-full border-accent text-accent rounded transition-colors bg-transparent hover:bg-accent hover:text-white mt-1" (click)="addCourse({ name: '', credits: 0, grade: '', gpa: 0 })">Add Course</button>
+										}
 									</td>
 								</tr>
 							}

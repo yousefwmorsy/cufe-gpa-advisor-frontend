@@ -43,7 +43,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
     this.totalCredits = this.terms.reduce((sum, term) => {
       if (!Array.isArray(term.courses)) return sum;
       return sum + term.courses.reduce((tSum: number, c: any) => {
-        return tSum + (c.credits > 0 && c.grade !== 'UNKNOWN' ? c.credits : 0);
+        return tSum + (c.credits > 0 && !["IC", "W", "FW", 'UNKNOWN'].includes(c.grade) ? c.credits : 0);
       }, 0);
     }, 0);
 
@@ -54,7 +54,7 @@ export class InsightsComponent implements OnInit, OnDestroy {
     let lastTermWithCourses = null;
     for (let i = this.terms.length - 1; i >= 0; i--) {
       const term = this.terms[i];
-      if (Array.isArray(term.courses) && term.courses.some((c: any) => c.credits > 0 && c.grade !== 'UNKNOWN')) {
+      if (Array.isArray(term.courses) && term.courses.some((c: any) => c.credits > 0 &&  !["IC", "W", "FW", 'UNKNOWN'].includes(c.grade))) {
         lastTermWithCourses = term;
         break;
       }
