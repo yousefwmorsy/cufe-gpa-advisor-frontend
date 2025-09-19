@@ -39,10 +39,12 @@ export class InsightsComponent implements OnInit, OnDestroy {
   }
 
   updateInsightsFromTranscript() {
-    // Sum total credits from all terms
+    // Sum total completed credits from all terms (exclude UNKNOWN grade)
     this.totalCredits = this.terms.reduce((sum, term) => {
       if (!Array.isArray(term.courses)) return sum;
-      return sum + term.courses.reduce((tSum: number, c: any) => tSum + (c.credits > 0 ? c.credits : 0), 0);
+      return sum + term.courses.reduce((tSum: number, c: any) => {
+        return tSum + (c.credits > 0 && c.grade !== 'UNKNOWN' ? c.credits : 0);
+      }, 0);
     }, 0);
 
     // Use GPA calculator service for cumulative GPA
