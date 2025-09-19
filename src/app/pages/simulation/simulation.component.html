@@ -2,7 +2,7 @@
 
 <div class="flex flex-col items-center w-full h-full p-2">
     <!-- Scenario Save/Load Buttons -->
-    <div class="w-full max-w-4xl flex gap-4 mb-4 justify-end">
+    <div class="w-full max-w-5xl flex gap-4 mb-4 justify-end">
         <div class="flex-1 flex items-center justify-center">
             <div class="bg-gray-100 border border-accent rounded px-4 py-2 w-full text-xs text-justify font-bold text-gray-700">
                 This page is intended for simulation, simulation is discarded when the page is closed or refreshed, please save your scenario for future access.
@@ -16,7 +16,7 @@
     </div>
 
 	<!-- Top Bar: Simulation Status -->
-	<div class="w-full max-w-4xl mb-6">
+	<div class="w-full max-w-5xl mb-6">
 		<div class="flex items-center justify-between bg-white border border-accent rounded-lg shadow px-6 py-4">
 			<div>
 				<span class="font-bold text-lg text-dark mr-2">Simulation Status:</span>
@@ -36,7 +36,7 @@
 	</div>
 
 	<!-- Simulation Inputs -->
-	<div class="w-full max-w-4xl flex gap-4 mb-4">
+	<div class="w-full max-w-5xl flex gap-4 mb-4">
 		<div class="flex flex-col flex-1">
 			<label class="font-bold mb-1 text-accent">Target GPA</label>
 			<input type="number" [(ngModel)]="targetGPA" min="0" max="4" step="0.01" class="p-2 border rounded text-center font-bold text-lg text-accent" />
@@ -50,7 +50,7 @@
 
 
 		<!-- Term Tabs -->
-		<div class="w-full max-w-4xl mt-2">
+		<div class="w-full max-w-5xl mt-2">
 		<div class="flex mb-2 border-b border-gray-300 items-center overflow-x-auto scrollbar-thin scrollbar-thumb-accent scrollbar-track-gray-200" style="white-space: nowrap;">
 			@for (term of terms; track term; let i = $index) {
 				<div class="flex items-center mr-2">

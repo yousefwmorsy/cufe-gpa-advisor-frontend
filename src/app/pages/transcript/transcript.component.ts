@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranscriptService } from '../../transcript.service';
+import { GpaCalculatorService } from '../../gpa-calculator.service';
 
 @Component({
   selector: 'app-transcript',
@@ -41,33 +42,22 @@ export class TranscriptComponent implements OnInit {
     { label: 'F', value: 'F' },
     { label: 'IC', value: 'IC' },
     { label: 'W', value: 'W' },
-    { label: 'FW', value: 'FW' }
+    { label: 'FW', value: 'FW' },
+    { label: 'UNK', value: 'UNKNOWN' }
   ];
 
-  gradeToGpaMap: { [key: string]: number } = {
-    'A+': 4.00,
-    'A': 4.00,
-    'A-': 3.70,
-    'B+': 3.30,
-    'B': 3.00,
-    'B-': 2.70,
-    'C+': 2.30,
-    'C': 2.00,
-    'C-': 1.70,
-    'D+': 1.30,
-    'D': 1.00,
-    'F': 0.00,
-    'IC': 0.00,
-    'W': 0.00,
-    'FW': 0.00
-  };
+  // Use gradeMap from GpaCalculatorService for mapping
   terms: any[] = [];
 
   selectedTermIdx = 0;
   pdfUrl: SafeResourceUrl | null = null;
   editTerms: boolean = false;
 
-  constructor(private sanitizer: DomSanitizer, private transcriptService: TranscriptService) {}
+  constructor(
+    private sanitizer: DomSanitizer,
+    private transcriptService: TranscriptService,
+    public gpaCalculator: GpaCalculatorService
+  ) {}
 
   ngOnInit() {
   this.terms = this.transcriptService.getTerms();
@@ -78,7 +68,7 @@ export class TranscriptComponent implements OnInit {
     try {
       const data = this.parseTranscriptText(this.transcriptText);
       this.terms = Object.entries(data).map(([termKey, courses]) => {
-        const match = termKey.match(/^(\w+)-(\d{4})$/);
+        const match = termKey.match(/^([\w]+)-(\d{4})$/);
         let name = termKey, year = '';
         if (match) {
           name = match[1];
@@ -91,7 +81,7 @@ export class TranscriptComponent implements OnInit {
             name: c.course_title,
             credits: c.hours,
             grade: c.grade,
-            gpa: this.gradeToGpaMap[c.grade] || 0
+            gpa: this.gpaCalculator['gradeMap'][c.grade] || 0
           }))
         };
       });
@@ -127,41 +117,23 @@ export class TranscriptComponent implements OnInit {
         const courseTitle = courseRow[2].trim();
         const grade = courseRow[3].trim();
         const hours = parseInt(courseRow[4], 10);
-        if (grade !== "UNKNOWN") {
-          semesters[currentSemester].push({
-            course_title: courseTitle,
-            grade: grade,
-            hours: hours,
-          });
-        }
+        semesters[currentSemester].push({
+          course_title: courseTitle,
+          grade: grade,
+          hours: hours,
+        });
       }
     }
     return semesters;
   }
 
   get currentTermGPA(): number {
-    const courses = this.terms[this.selectedTermIdx]?.courses || [];
-    let totalPoints = 0, totalCredits = 0;
-    for (const c of courses) {
-      if (c.credits > 0) {
-        totalPoints += c.gpa * c.credits;
-        totalCredits += c.credits;
-      }
-    }
-    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+    const term = this.terms[this.selectedTermIdx];
+    return this.gpaCalculator.calculateTermGPA(term);
   }
 
   get cumulativeGPA(): number {
-    let totalPoints = 0, totalCredits = 0;
-    for (const term of this.terms) {
-      for (const c of term.courses) {
-        if (c.credits > 0) {
-          totalPoints += c.gpa * c.credits;
-          totalCredits += c.credits;
-        }
-      }
-    }
-    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+    return this.gpaCalculator.calculateCumulativeGPA(this.terms);
   }
 
   onCreditsChange(course: any): void {
@@ -178,7 +150,7 @@ export class TranscriptComponent implements OnInit {
   }
 
   onGradeChange(course: any): void {
-    course.gpa = this.gradeToGpaMap[course.grade] || 0;
+    course.gpa = this.gpaCalculator['gradeMap'][course.grade] || 0;
     if (["IC", "W", "FW"].includes(course.grade)) {
       course.credits = 0;
     } else if (course.credits < 0) {

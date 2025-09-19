@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranscriptService } from '../../transcript.service';
+import { GpaCalculatorService } from '../../gpa-calculator.service';
 
 @Component({
   selector: 'app-simulation',
@@ -10,7 +11,14 @@ import { TranscriptService } from '../../transcript.service';
   styleUrl: './simulation.component.scss'
 })
 export class SimulationComponent implements OnInit {
-  targetGPA: number = 4.0;
+  private _targetGPA: number = 4.0;
+  get targetGPA(): number {
+    return this._targetGPA;
+  }
+  set targetGPA(value: number) {
+    this._targetGPA = value;
+    this.updateSimulation();
+  }
   numTerms: number = 1;
   terms: any[] = [];
   selectedTermIdx: number = 0;
@@ -32,27 +40,15 @@ export class SimulationComponent implements OnInit {
     { label: 'F', value: 'F' },
     { label: 'IC', value: 'IC' },
     { label: 'W', value: 'W' },
-    { label: 'FW', value: 'FW' }
+    { label: 'FW', value: 'FW' },
+    { label: 'UNK', value: 'UNKNOWN' }
   ];
-  gradeToGpaMap: { [key: string]: number } = {
-    'A+': 4.00,
-    'A': 4.00,
-    'A-': 3.70,
-    'B+': 3.30,
-    'B': 3.00,
-    'B-': 2.70,
-    'C+': 2.30,
-    'C': 2.00,
-    'C-': 1.70,
-    'D+': 1.30,
-    'D': 1.00,
-    'F': 0.00,
-    'IC': 0.00,
-    'W': 0.00,
-    'FW': 0.00
-  };
+  // Use gradeMap from GpaCalculatorService for mapping
 
-  constructor(private transcriptService: TranscriptService) {}
+  constructor(
+    private transcriptService: TranscriptService,
+    public gpaCalculator: GpaCalculatorService
+  ) {}
 
   ngOnInit() {
     // Start with current transcript terms
@@ -148,7 +144,7 @@ export class SimulationComponent implements OnInit {
   }
 
   onGradeChange(course: any): void {
-    course.gpa = this.gradeToGpaMap[course.grade] || 0;
+    course.gpa = this.gpaCalculator['gradeMap'][course.grade] || 0;
     if (["IC", "W", "FW"].includes(course.grade)) {
       course.credits = 0;
     } else if (course.credits < 0) {
@@ -158,29 +154,13 @@ export class SimulationComponent implements OnInit {
   }
 
   updateSimulation() {
-    // Calculate simulated GPA
-    let totalPoints = 0, totalCredits = 0;
-    for (const term of this.terms) {
-      for (const c of term.courses) {
-        if (c.credits > 0) {
-          totalPoints += ((c.gpa ?? this.gradeToGpaMap[c.grade]) || 0) * c.credits;
-          totalCredits += c.credits;
-        }
-      }
-    }
-    this.simulatedGPA = totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+    // Calculate simulated GPA using the service
+    this.simulatedGPA = this.gpaCalculator.calculateCumulativeGPA(this.terms);
     this.possible = this.simulatedGPA >= this.targetGPA;
   }
 
   get currentTermGPA(): number {
-    const courses = this.terms[this.selectedTermIdx]?.courses || [];
-    let totalPoints = 0, totalCredits = 0;
-    for (const c of courses) {
-      if (c.credits > 0) {
-        totalPoints += ((c.gpa ?? this.gradeToGpaMap[c.grade]) || 0) * c.credits;
-        totalCredits += c.credits;
-      }
-    }
-    return totalCredits > 0 ? +(totalPoints / totalCredits).toFixed(2) : 0;
+    const term = this.terms[this.selectedTermIdx];
+    return this.gpaCalculator.calculateTermGPA(term);
   }
 }
