@@ -1,3 +1,9 @@
+// Import PDF.js for PDF text extraction (Angular compatibility)
+// @ts-ignore
+import * as pdfjsLib from 'pdfjs-dist/legacy/build/pdf';
+// Set the workerSrc property for PDF.js to the local asset (required by v4+)
+// @ts-ignore
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/assets/pdf.worker.min.mjs';
 import { Component, OnInit } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
@@ -13,6 +19,37 @@ import { GpaCalculatorService } from '../../gpa-calculator.service';
   imports: [FormsModule]
 })
 export class TranscriptComponent implements OnInit {
+  // Handle transcript file upload as text or PDF
+  async onTranscriptFileSelected(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        // PDF: extract text using pdfjs-dist
+        const arrayBuffer = await file.arrayBuffer();
+        // @ts-ignore
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let text = '';
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          text += content.items.map((item: any) => item.str).join(' ') + '\n';
+        }
+        console.log('Extracted PDF text:', text);
+        this.transcriptText = text;
+        this.confirmTranscriptText();
+      } else {
+        // Plain text file
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          console.log('Extracted TXT text:', e.target.result);
+          this.transcriptText = e.target.result;
+          this.confirmTranscriptText();
+        };
+        reader.readAsText(file);
+      }
+    }
+  }
   addCourse(course: any) {
     const termIdx = this.selectedTermIdx;
     this.transcriptService.addCourse(termIdx, course);
