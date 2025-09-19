@@ -88,14 +88,14 @@
 					@for (course of terms[selectedTermIdx].courses; track course; let ci = $index) {
 						<tr>
 							<td class="p-2">
-								@if (!isTermEditable(selectedTermIdx) || (editableTermIndexes.has(selectedTermIdx) && !isSimulationTerm(terms[selectedTermIdx]))) {
+								@if (!isTermEditable(selectedTermIdx) || (editableTermIndexes.has(selectedTermIdx) && !isSimulationTerm(terms[selectedTermIdx])) || (course.originalGrade !== undefined && course.originalGrade !== 'UNKNOWN')) {
 									<input [value]="course.name" class="w-full p-2 border rounded bg-gray-100 text-gray-900" readonly />
 								} @else {
 									<input [(ngModel)]="course.name" class="w-full p-2 border rounded" />
 								}
 							</td>
 							<td class="p-2 text-center">
-								@if (!isTermEditable(selectedTermIdx) || (editableTermIndexes.has(selectedTermIdx) && !isSimulationTerm(terms[selectedTermIdx]))) {
+								@if (!isTermEditable(selectedTermIdx) || (editableTermIndexes.has(selectedTermIdx) && !isSimulationTerm(terms[selectedTermIdx])) || (course.originalGrade !== undefined && course.originalGrade !== 'UNKNOWN')) {
 									<input type="number" [value]="course.credits" class="w-16 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
 								} @else {
 									<input type="number" [(ngModel)]="course.credits" class="w-16 p-2 border rounded text-center" [disabled]="course.grade === 'IC' || course.grade === 'W' || course.grade === 'FW'" min="0" (ngModelChange)="onCreditsChange(course)" />
@@ -104,12 +104,14 @@
 							<td class="p-2 text-center">
 								@if (!isTermEditable(selectedTermIdx)) {
 									<input type="text" [value]="course.grade" class="w-20 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
-								} @else if (isTermWarning(terms[selectedTermIdx]) && !isSimulationTerm(terms[selectedTermIdx])) {
+								} @else if (isTermWarning(terms[selectedTermIdx]) && !isSimulationTerm(terms[selectedTermIdx]) && (course.originalGrade === undefined || course.originalGrade === 'UNKNOWN')) {
 									<select [(ngModel)]="course.grade" (change)="onGradeChange(course)" class="w-20 p-2 border rounded text-center">
 										@for (g of gradeOptions; track g) {
 											<option [value]="g.value">{{ g.label }}</option>
 										}
 									</select>
+								} @else if (isTermWarning(terms[selectedTermIdx]) && !isSimulationTerm(terms[selectedTermIdx]) && (course.originalGrade !== undefined && course.originalGrade !== 'UNKNOWN')) {
+									<input type="text" [value]="course.grade" class="w-20 p-2 border rounded text-center bg-gray-100 text-gray-900" readonly />
 								} @else {
 									<select [(ngModel)]="course.grade" (change)="onGradeChange(course)" class="w-20 p-2 border rounded text-center">
 										@for (g of gradeOptions; track g) {

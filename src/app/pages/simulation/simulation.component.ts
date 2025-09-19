@@ -1,7 +1,6 @@
 
 
 
-
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -16,7 +15,6 @@ import { GpaCalculatorService } from '../../gpa-calculator.service';
   styleUrl: './simulation.component.scss'
 })
 export class SimulationComponent implements OnInit {
-  private readonly LOCAL_STORAGE_KEY = 'gpa-simulation-state';
   // Returns true if the term is a simulation term (name starts with 'Sim Term')
   isSimulationTerm(term: any): boolean {
     return typeof term.name === 'string' && term.name.startsWith('Sim Term');
@@ -63,20 +61,13 @@ export class SimulationComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // Load from localStorage if present
-    const saved = localStorage.getItem(this.LOCAL_STORAGE_KEY);
-    if (saved) {
-      try {
-        const scenario = JSON.parse(saved);
-        this._targetGPA = scenario.targetGPA ?? this._targetGPA;
-        this.numTerms = scenario.numTerms ?? this.numTerms;
-        this.terms = scenario.terms ?? this.terms;
-      } catch {}
-    }
     // Start with current transcript terms
     this.terms = this.transcriptService.getTerms().map(term => ({
       ...term,
-      courses: term.courses.map((c: any) => ({ ...c }))
+      courses: term.courses.map((c: any) => ({
+        ...c,
+        originalGrade: c.grade // Set originalGrade to transcript grade
+      }))
     }));
     this.addSimulationTerms();
     this.updateSimulation();
@@ -210,14 +201,6 @@ export class SimulationComponent implements OnInit {
     // Calculate simulated GPA using the service
     this.simulatedGPA = this.gpaCalculator.calculateCumulativeGPA(this.terms);
     this.possible = this.simulatedGPA >= this.targetGPA;
-
-    // Save to localStorage
-    const scenario = {
-      targetGPA: this.targetGPA,
-      numTerms: this.numTerms,
-      terms: this.terms
-    };
-    localStorage.setItem(this.LOCAL_STORAGE_KEY, JSON.stringify(scenario));
   }
 
   get currentTermGPA(): number {
