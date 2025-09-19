@@ -149,7 +149,7 @@ export class TranscriptComponent implements OnInit {
         continue;
       }
       // Try to match a course row (Course No, Title, Grade, Hours, Quality Points)
-      const courseRow = line.match(/^([\w]+)\s+([A-Za-z0-9,\-\s]+)\s+([A-Za-z\+\-]+)\s+(\d+)\s+([\d\.]+)/);
+      const courseRow = line.match(/^([\w]+)\s+([A-Za-z0-9,:\/\(\)\-\s]+)\s+([A-Za-z\+\-]+)\s+(\d+)\s+([\d\.]+)/);
       if (courseRow) {
         const courseTitle = courseRow[2].trim();
         const grade = courseRow[3].trim();
