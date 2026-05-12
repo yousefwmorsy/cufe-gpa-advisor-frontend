@@ -1,0 +1,152 @@
+
+.bg-blue-100 {
+	background-color: #dbeafe;
+}
+.text-blue-900 {
+	color: #1e3a8a;
+}
+.bg-gray-100 {
+	background-color: #f3f4f6;
+}
+.text-gray-900 {
+	color: #111827;
+}
+.text-right {
+	text-align: right;
+}
+.text-left {
+	text-align: left;
+}
+.self-end {
+	align-self: flex-end;
+}
+.self-start {
+	align-self: flex-start;
+}
+
+.card {
+	background: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 8px;
+	padding: 12px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.btn {
+	background: #2563eb;
+	color: #ffffff;
+	border-radius: 8px;
+	padding: 8px 14px;
+	font-weight: 600;
+}
+
+.btn-secondary {
+	background: #f3f4f6;
+	color: #111827;
+	border-radius: 8px;
+	padding: 8px 14px;
+	font-weight: 600;
+}
+
+.input-field {
+	color: #111827;
+	background: #ffffff;
+}
+
+.input-field::placeholder {
+	color: #6b7280;
+}
+
+.message-row {
+	display: flex;
+	width: 100%;
+}
+
+.message-row-user {
+	justify-content: flex-end;
+}
+
+.message-row-assistant {
+	justify-content: flex-start;
+}
+
+.message-bubble {
+	max-width: 100%;
+	width: fit-content;
+	padding: 10px 12px;
+	border-radius: 10px;
+}
+
+.message-label {
+	font-size: 0.75rem;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.markdown {
+	color: inherit;
+	line-height: 1.5;
+	word-break: break-word;
+}
+
+.markdown p {
+	margin: 0 0 8px;
+}
+
+.markdown p:last-child {
+	margin-bottom: 0;
+}
+
+.markdown h3,
+.markdown h4,
+.markdown h5,
+.markdown h6 {
+	margin: 8px 0 6px;
+	font-weight: 700;
+}
+
+.markdown h3 {
+	font-size: 1.1rem;
+}
+
+.markdown h4 {
+	font-size: 1rem;
+}
+
+.markdown ul {
+	margin: 6px 0 6px 18px;
+	padding: 0;
+	list-style: disc;
+}
+
+.markdown li {
+	margin-bottom: 4px;
+}
+
+.markdown code {
+	background: #e5e7eb;
+	border-radius: 4px;
+	padding: 2px 4px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+	font-size: 0.85em;
+}
+
+.markdown pre {
+	background: #0f172a;
+	color: #e2e8f0;
+	border-radius: 8px;
+	padding: 10px 12px;
+	overflow-x: auto;
+	margin: 8px 0;
+}
+
+.markdown pre code {
+	background: transparent;
+	color: inherit;
+	padding: 0;
+}
+
+.markdown a {
+	color: #2563eb;
+	text-decoration: underline;
+}

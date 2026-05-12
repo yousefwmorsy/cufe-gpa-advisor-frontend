@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+// import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgChartsModule } from 'ng2-charts';
@@ -28,7 +28,7 @@ import { AdvisorComponent } from './pages/advisor/advisor.component';
   imports: [
     BrowserModule,
     CommonModule,
-    RouterModule,
+    // RouterModule,
     HttpClientModule,
   FormsModule,
   NgChartsModule
