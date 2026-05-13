@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/gpa-advisor-frontend",
+            "outputPath": "dist",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -43,6 +43,8 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/cufe-ai-gpa-advisor/",
+              "deployUrl": "/cufe-ai-gpa-advisor/",
               "budgets": [
                 {
                   "type": "initial",
